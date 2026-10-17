@@ -448,6 +448,22 @@
 <context>
     <name>LlmsPage</name>
     <message>
+        <source>Search a series…</source>
+        <translation>Rechercher une série…</translation>
+    </message>
+    <message>
+        <source>Look the series up online and fill this field with a short, spoiler-lean sheet</source>
+        <translation>Chercher la série en ligne et remplir ce champ avec une courte fiche sans spoilers</translation>
+    </message>
+    <message>
+        <source>Replace the current context?</source>
+        <translation>Remplacer le contexte actuel ?</translation>
+    </message>
+    <message>
+        <source>The Extra Context field already has text. Replace it with the new sheet?</source>
+        <translation>Le champ Contexte supplémentaire contient déjà du texte. Le remplacer par la nouvelle fiche ?</translation>
+    </message>
+    <message>
         <location filename="../../app/ui/settings/llms_page.py" line="17"/>
         <source>Provide Image as Input to AI</source>
         <translation>Fournir l&apos;image comme entrée à l&apos;IA</translation>
@@ -2639,5 +2655,21 @@ Il a peut-être été déplacé, renommé ou supprimé.
         <source>Start by dropping your pages (images, PDF, CBZ…) in the box below.</source>
         <translation>Commence par déposer tes pages (images, PDF, CBZ…) dans la zone ci-dessous.</translation>
     </message>
+</context>
+<context>
+    <name>SeriesSearchDialog</name>
+    <message><source>Search a series</source><translation>Rechercher une série</translation></message>
+    <message><source>Type the title of the manga / manhwa. We fetch a short sheet (premise, genres, main characters) to help the AI translate with the right tone and names. Only the beginning of the story is kept, to avoid spoilers.</source><translation>Tape le titre du manga / manhwa. On récupère une courte fiche (prémisse, genres, personnages principaux) pour aider l'IA à traduire avec le bon ton et les bons noms. Seul le début de l'histoire est gardé, pour éviter les spoilers.</translation></message>
+    <message><source>Series title…</source><translation>Titre de la série…</translation></message>
+    <message><source>Search</source><translation>Rechercher</translation></message>
+    <message><source>The sheet will appear here. You can edit it.</source><translation>La fiche apparaîtra ici. Tu peux la modifier.</translation></message>
+    <message><source>Use this sheet</source><translation>Utiliser cette fiche</translation></message>
+    <message><source>Searching…</source><translation>Recherche…</translation></message>
+    <message><source>No result. Try the original or romanized title.</source><translation>Aucun résultat. Essaie le titre original ou romanisé.</translation></message>
+    <message><source>Pick the right series.</source><translation>Choisis la bonne série.</translation></message>
+    <message><source>Loading the sheet…</source><translation>Chargement de la fiche…</translation></message>
+    <message><source>Passages marked as spoilers by the source were removed. Still, give it a quick read.</source><translation>Les passages marqués comme spoilers par la source ont été retirés. Relis-la quand même rapidement.</translation></message>
+    <message><source>This source does not mark spoilers: please read the premise before using it.</source><translation>Cette source ne marque pas les spoilers : relis la prémisse avant de l'utiliser.</translation></message>
+    <message><source>Search failed: %1</source><translation>Échec de la recherche : %1</translation></message>
 </context>
 </TS>
