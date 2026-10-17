@@ -17,6 +17,7 @@ from modules.utils.language_utils import register_target_language
 from .builders import MainWindowBuildersMixin
 from .frame import EdgeResizer
 from .tools import ToolStateMixin
+from .simple_mode import SimpleModeMixin
 
 if sys.platform == "win32":
     WM_NCHITTEST = 0x0084
@@ -54,8 +55,9 @@ if sys.platform == "win32":
 
 
 class ComicTranslateUI(
-    MainWindowBuildersMixin, 
-    ToolStateMixin, 
+    MainWindowBuildersMixin,
+    ToolStateMixin,
+    SimpleModeMixin,
     QtWidgets.QMainWindow
 ):
     def __init__(self, parent=None):
@@ -176,6 +178,7 @@ class ComicTranslateUI(
         self.main_layout.addWidget(MDivider(orientation=QtCore.Qt.Vertical))
 
         self.main_content_widget = self._create_main_content()
+        self._init_simple_mode()
         self.title_bar.set_undo_redo_widget(self.undo_tool_group)
         self._center_stack = QtWidgets.QStackedWidget()
 

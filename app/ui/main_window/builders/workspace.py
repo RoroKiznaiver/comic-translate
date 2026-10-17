@@ -82,9 +82,20 @@ class WorkspaceMixin:
         self.batch_report_button.setEnabled(False)
         self.batch_report_button.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
+        # Simple-mode helpers: a one-line guide and the switch to the full toolset.
+        self.simple_hint = QtWidgets.QLabel()
+        self.simple_hint.setWordWrap(False)
+        self.advanced_checkbox = MCheckBox(self.tr("Advanced options"))
+        self.advanced_checkbox.setToolTip(
+            self.tr("Show every step, text-styling and editing tool")
+        )
+        self.advanced_checkbox.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
+
+        header_layout.addWidget(self.simple_hint)
         header_layout.addWidget(self.hbutton_group)
         header_layout.addWidget(self.loading)
         header_layout.addStretch()
+        header_layout.addWidget(self.advanced_checkbox)
         header_layout.addWidget(self.webtoon_toggle)
         header_layout.addWidget(self.manual_radio)
         header_layout.addWidget(self.automatic_radio)
@@ -369,8 +380,14 @@ class WorkspaceMixin:
         tools_scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         tools_scroll.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
 
+        # Keep handles on the advanced-only sections so simple mode can hide them.
+        self.text_render_widget = QtWidgets.QWidget()
+        text_render_layout.setContentsMargins(0, 0, 0, 0)
+        self.text_render_widget.setLayout(text_render_layout)
+        self.tools_scroll = tools_scroll
+
         right_layout.addLayout(input_layout)
-        right_layout.addLayout(text_render_layout)
+        right_layout.addWidget(self.text_render_widget)
         right_layout.addWidget(tools_scroll, 1)
 
         right_widget = QtWidgets.QWidget()

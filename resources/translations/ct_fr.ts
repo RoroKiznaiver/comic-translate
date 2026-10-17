@@ -1726,6 +1726,14 @@ puis effectuer l&apos;inpainting sur l&apos;image redimensionnée.</translation>
 <context>
     <name>WorkspaceMixin</name>
     <message>
+        <source>Advanced options</source>
+        <translation>Options avancées</translation>
+    </message>
+    <message>
+        <source>Show every step, text-styling and editing tool</source>
+        <translation>Afficher toutes les étapes et tous les outils de style et d'édition du texte</translation>
+    </message>
+    <message>
         <location filename="../../app/ui/main_window/builders/workspace.py" line="31"/>
         <source>Undo</source>
         <translation>Annuler</translation>
@@ -2619,6 +2627,17 @@ Il a peut-être été déplacé, renommé ou supprimé.
         <location filename="../../app/ui/canvas/rectangle.py" line="81"/>
         <source>Translate</source>
         <translation>Traduire</translation>
+    </message>
+</context>
+<context>
+    <name>SimpleModeMixin</name>
+    <message>
+        <source>Choose the languages on the right, then click “Translate All”.</source>
+        <translation>Choisis les langues à droite, puis clique sur « Traduire tout ».</translation>
+    </message>
+    <message>
+        <source>Start by dropping your pages (images, PDF, CBZ…) in the box below.</source>
+        <translation>Commence par déposer tes pages (images, PDF, CBZ…) dans la zone ci-dessous.</translation>
     </message>
 </context>
 </TS>
