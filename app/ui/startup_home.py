@@ -62,11 +62,11 @@ class _NewCard(QtWidgets.QFrame):
 
     def apply_theme(self, is_dark: bool):
         if is_dark:
-            border   = "#484848"
-            bg       = "#3a3a3a"
-            bg_prev  = "#424242"
-            bg_lbl   = "#333333"
-            fg_lbl   = "#c0c0c0"
+            border   = "#2F2E3B"
+            bg       = "#1D1C26"
+            bg_prev  = "#2A2936"
+            bg_lbl   = "#1D1C26"
+            fg_lbl   = "#A09DB3"
             hover_b  = dayu_theme.primary_color or "#1890ff"
         else:
             border   = "#d0d0d0"
@@ -195,9 +195,9 @@ class _RecentRow(QtWidgets.QFrame):
     def apply_theme(self, is_dark: bool):
         self._is_dark = is_dark
         if is_dark:
-            self._fg       = "#d0d0d0"
-            self._fg_sub   = "#777"
-            self._date_fg  = "#666"
+            self._fg       = "#E4E1D9"
+            self._fg_sub   = "#8E8CA0"
+            self._date_fg  = "#8E8CA0"
             self._hover    = "rgba(255,255,255,0.06)"
             self._normal   = "transparent"
             self._accent   = dayu_theme.primary_color or "#1890ff"
@@ -259,11 +259,11 @@ class _RecentRow(QtWidgets.QFrame):
         menu = QtWidgets.QMenu(self)
         is_dark = bool(getattr(self, "_is_dark", True))
         if is_dark:
-            menu_bg = "#2f2f2f"
-            menu_border = "#4a4a4a"
-            item_fg = "#dddddd"
+            menu_bg = "#1D1C26"
+            menu_border = "#2F2E3B"
+            item_fg = "#E4E1D9"
             item_hover = "rgba(255,255,255,0.10)"
-            sep = "#4a4a4a"
+            sep = "#2F2E3B"
         else:
             menu_bg = "#ffffff"
             menu_border = "#d9d9d9"
@@ -382,9 +382,9 @@ class _PillButton(QtWidgets.QPushButton):
     def apply_theme(self, is_dark: bool):
         if is_dark:
             normal_bg   = "transparent"
-            normal_fg   = "#a0a0a0"
-            checked_bg  = "#1890ff"
-            checked_fg  = "#ffffff"
+            normal_fg   = "#A09DB3"
+            checked_bg  = dayu_theme.primary_color or "#FFC857"
+            checked_fg  = "#15141B"
             hover_bg    = "rgba(255,255,255,0.08)"
         else:
             normal_bg   = "transparent"
@@ -657,14 +657,14 @@ class StartupHomeScreen(QtWidgets.QWidget):
     def _refresh_theme(self):
         d = self._is_dark
         if d:
-            fg       = "#d9d9d9"
-            fg_sub   = "#888"
-            hdr_fg   = "#a0a0a0"
-            div      = "#3a3a3a"
-            sb_bg    = "#3a3a3a"
-            sb_fg    = "#d0d0d0"
-            sb_ph    = "#666"
-            sb_brd   = "#505050"
+            fg       = "#E4E1D9"
+            fg_sub   = "#A09DB3"
+            hdr_fg   = "#A09DB3"
+            div      = "#2F2E3B"
+            sb_bg    = "#1D1C26"
+            sb_fg    = "#E4E1D9"
+            sb_ph    = "#8E8CA0"
+            sb_brd   = "#2F2E3B"
         else:
             fg       = "#262626"
             fg_sub   = "#666"

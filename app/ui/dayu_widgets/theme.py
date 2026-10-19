@@ -22,9 +22,9 @@ from .qt import get_scale_factor
 def get_theme_size():
     scale_factor_x, scale_factor_y = get_scale_factor()
     return {
-        "border_radius_large": int(6 * scale_factor_x),
-        "border_radius_base": int(4 * scale_factor_x),
-        "border_radius_small": int(2 * scale_factor_x),
+        "border_radius_large": int(12 * scale_factor_x),
+        "border_radius_base": int(8 * scale_factor_x),
+        "border_radius_small": int(4 * scale_factor_x),
         "huge": int(48 * scale_factor_x),
         "large": int(40 * scale_factor_x),
         "medium": int(32 * scale_factor_x),
@@ -56,7 +56,7 @@ def get_theme_size():
         "spin_box_icon_small": int(8 * scale_factor_x),
         "spin_box_icon_tiny": int(6 * scale_factor_x),
         "drag_border": int(2 * scale_factor_x),
-        "drag_border_radius": int(10 * scale_factor_x),
+        "drag_border_radius": int(28 * scale_factor_x),
         "drag_padding_x": int(20 * scale_factor_x),
         "drag_padding_y": int(40 * scale_factor_x),
         "drag_size": int(60 * scale_factor_x),
@@ -115,6 +115,7 @@ class MTheme(object):
     red = "#f5222d"
     orange = "#fa8c16"
     yellow = "#fadb14"
+    amber = "#FFC857"  # Bulle accent (dark theme primary)
     volcano = "#fa541c"
     geekblue = "#2f54eb"
     lime = "#a0d911"
@@ -260,7 +261,7 @@ class MTheme(object):
     def _init_font(self):
         # font
         self.font_family = (
-            'BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",'
+            '"Instrument Sans",BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",'
             '"Helvetica Neue",Helvetica,Arial,sans-serif'
         )
         self.font_size_base = 9
@@ -278,21 +279,22 @@ class MTheme(object):
             return get_theme_size().get(item, 0)
 
     def _dark(self):
-        self.title_color = "#ffffff"
-        self.primary_text_color = "#d9d9d9"
-        self.secondary_text_color = "#a6a6a6"
-        self.disable_color = "#737373"
-        self.border_color = "#1e1e1e"
-        self.divider_color = "#262626"
-        self.header_color = "#0a0a0a"
-        self.icon_color = "#a6a6a6"
+        self.title_color = "#F3F0E8"
+        self.primary_text_color = "#E4E1D9"
+        self.secondary_text_color = "#A09DB3"
+        self.disable_color = "#6B6A7A"
+        self.border_color = "#2F2E3B"
+        self.divider_color = "#2F2E3B"
+        self.header_color = "#15141B"
+        self.icon_color = "#A09DB3"
 
-        self.background_color = "#323232"
-        self.background_selected_color = "#292929"
-        self.background_in_color = "#3a3a3a"
-        self.background_out_color = "#494949"
+        # "Ink" palette: ground 900, cards/inputs 800, raised/hover 700
+        self.background_color = "#15141B"
+        self.background_selected_color = "#2A2936"
+        self.background_in_color = "#1D1C26"
+        self.background_out_color = "#2A2936"
         self.mask_color = utils.fade_color(self.background_color, "90%")
-        self.toast_color = "#555555"
+        self.toast_color = "#2A2936"
 
     def _light(self):
         self.title_color = "#262626"

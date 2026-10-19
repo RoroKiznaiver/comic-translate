@@ -5,15 +5,19 @@ tool at once. That is great for power users and overwhelming for everyone else.
 
 Simple mode (the default) reduces the screen to the happy path:
 
-    1. import pages  ->  2. pick languages  ->  3. Translate  ->  4. export
+    1. import pages  ->  2. Translate  ->  3. export
 
-"Advanced options" brings back the original, complete interface. Nothing is
-removed or rewired: the widgets all still exist and the controller keeps using
-them, we only toggle their visibility.
+and shows a step indicator (Import / Translate / Export) whose pill slides to
+the current step. "Advanced options" brings back the original, complete
+interface. Nothing is removed or rewired: the widgets all still exist and the
+controller keeps using them, we only toggle their visibility.
 """
 
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore
 from PySide6.QtCore import QSettings
+
+from app.ui.motion import reveal
+from app.ui.step_logic import compute_step_index
 
 _SETTINGS_ORG = "ComicLabs"
 _SETTINGS_APP = "ComicTranslate"
@@ -25,24 +29,28 @@ class SimpleModeMixin:
     def _init_simple_mode(self) -> None:
         """Call once, right after the workspace widgets have been built."""
         self._advanced_mode = self._load_advanced_mode()
+        self._batch_finished = False
+        self._cancel_clicked = False
+        self._stepper_running = False
 
-        # Widgets that only make sense for people driving the pipeline by hand.
+        # Hidden instantly in simple mode.
         self._advanced_only_widgets = [
             self.hbutton_group,
             self.manual_radio,
             self.automatic_radio,
             self.batch_report_button,
-            self.text_render_widget,
             self.tools_scroll,
         ]
+        # Content-sized sections that grow/shrink with an animation.
+        self._animated_sections = [self.text_render_widget]
 
         self.advanced_checkbox.setChecked(self._advanced_mode)
         self.advanced_checkbox.toggled.connect(self.set_advanced_mode)
 
-        # "Cancel" is noise until something is actually running.
+        self.cancel_button.clicked.connect(self._on_cancel_clicked)
+        # The progress bar is visible for the whole duration of a batch.
         self.progress_bar.installEventFilter(self)
-        # Keep the one-line guide in sync with what the user is looking at.
-        self.central_stack.currentChanged.connect(lambda _i: self._update_simple_hint())
+        self.central_stack.currentChanged.connect(lambda _i: self._on_stack_changed())
 
         self._apply_mode()
 
@@ -77,10 +85,12 @@ class SimpleModeMixin:
 
         for widget in self._advanced_only_widgets:
             widget.setVisible(advanced)
+        for section in self._animated_sections:
+            reveal(section, advanced)
 
-        self.simple_hint.setVisible(not advanced)
+        self.step_pill.setVisible(not advanced)
         self._update_cancel_visibility()
-        self._update_simple_hint()
+        self._update_stepper()
 
         # Never trap the user in a hidden manual workflow: simple mode is
         # always the automatic pipeline ("Translate All").
@@ -89,28 +99,40 @@ class SimpleModeMixin:
             self.batch_mode_selected()
 
     def _update_cancel_visibility(self) -> None:
+        # "Cancel" is noise until something is actually running.
         if self._advanced_mode:
             self.cancel_button.setVisible(True)
         else:
-            self.cancel_button.setVisible(self.progress_bar.isVisible())
+            self.cancel_button.setVisible(self._stepper_running)
 
-    def _update_simple_hint(self) -> None:
-        if not hasattr(self, "simple_hint"):
-            return
+    def _update_stepper(self) -> None:
         has_pages = self.central_stack.currentWidget() is not self.drag_browser
-        if has_pages:
-            text = self.tr("Choose the languages on the right, then click “Translate All”.")
-        else:
-            text = self.tr("Start by dropping your pages (images, PDF, CBZ…) in the box below.")
-        self.simple_hint.setText(text)
+        index = compute_step_index(has_pages, self._stepper_running, self._batch_finished)
+        self.step_pill.set_index(index)
+
+    def _on_cancel_clicked(self) -> None:
+        self._cancel_clicked = True
+
+    def _on_stack_changed(self) -> None:
+        if self.central_stack.currentWidget() is self.drag_browser:
+            # Back on the drop zone (new project): start the flow over.
+            self._batch_finished = False
+        self._update_stepper()
 
     def eventFilter(self, obj, event):  # type: ignore[override]
-        # The progress bar is shown for the whole duration of a batch, which is
-        # exactly when "Cancel" is useful.
-        if obj is getattr(self, "progress_bar", None) and event.type() in (
-            QtCore.QEvent.Type.Show,
-            QtCore.QEvent.Type.Hide,
-        ):
-            if getattr(self, "_advanced_mode", True) is False:
-                self.cancel_button.setVisible(event.type() == QtCore.QEvent.Type.Show)
+        if obj is getattr(self, "progress_bar", None):
+            kind = event.type()
+            if kind == QtCore.QEvent.Type.Show and not self._stepper_running:
+                self._stepper_running = True
+                self._batch_finished = False
+                self._cancel_clicked = False
+                self._update_cancel_visibility()
+                self._update_stepper()
+            elif kind == QtCore.QEvent.Type.Hide and self._stepper_running and obj.isHidden():
+                # isHidden() is only true for an explicit hide, not when a parent
+                # page is hidden (e.g. the user opens Settings mid-batch).
+                self._stepper_running = False
+                self._batch_finished = not self._cancel_clicked
+                self._update_cancel_visibility()
+                self._update_stepper()
         return super().eventFilter(obj, event)

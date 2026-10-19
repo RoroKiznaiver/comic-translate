@@ -830,6 +830,10 @@ Veuillez vérifier votre connexion Internet.</translation>
         <source>Theme</source>
         <translation>Thème</translation>
     </message>
+    <message>
+        <source>Reduce animations</source>
+        <translation>Réduire les animations</translation>
+    </message>
 </context>
 <context>
     <name>ProjectPage</name>
@@ -1965,6 +1969,14 @@ back on the Image (for further editing)</source>
         <source>Inpainting</source>
         <translation>Inpainting</translation>
     </message>
+    <message>
+        <source>Import</source>
+        <translation>Importer</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Exporter</translation>
+    </message>
 </context>
 <context>
     <name>_ProjectDetailsPopup</name>
@@ -2671,5 +2683,12 @@ Il a peut-être été déplacé, renommé ou supprimé.
     <message><source>Passages marked as spoilers by the source were removed. Still, give it a quick read.</source><translation>Les passages marqués comme spoilers par la source ont été retirés. Relis-la quand même rapidement.</translation></message>
     <message><source>This source does not mark spoilers: please read the premise before using it.</source><translation>Cette source ne marque pas les spoilers : relis la prémisse avant de l'utiliser.</translation></message>
     <message><source>Search failed: %1</source><translation>Échec de la recherche : %1</translation></message>
+</context>
+<context>
+    <name>StepPill</name>
+    <message>
+        <source>Steps</source>
+        <translation>Étapes</translation>
+    </message>
 </context>
 </TS>
