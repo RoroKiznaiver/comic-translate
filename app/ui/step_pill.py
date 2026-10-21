@@ -1,4 +1,4 @@
-"""Stepper (Import, Translate, Export) with a pill that slides to the active step."""
+"""Stepper (Import, Translate, Export): numbered links, underline slides to the active step."""
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
@@ -6,14 +6,8 @@ from app.ui.dayu_widgets import dayu_theme
 from app.ui.motion import CURVE_PILL, PILL_MS, animations_enabled
 
 
-def _readable_on(color: QtGui.QColor) -> QtGui.QColor:
-    """Dark text on light fills, white text on dark fills."""
-    luminance = (0.299 * color.red() + 0.587 * color.green() + 0.114 * color.blue()) / 255
-    return QtGui.QColor("#15141B") if luminance > 0.55 else QtGui.QColor("#FFFFFF")
-
-
 class StepPill(QtWidgets.QWidget):
-    def __init__(self, labels: list[str], parent=None, item_width: int = 104, height: int = 36):
+    def __init__(self, labels: list[str], parent=None, item_width: int = 120, height: int = 40):
         super().__init__(parent)
         self._labels = list(labels)
         self._item_w = item_width
@@ -60,32 +54,44 @@ class StepPill(QtWidgets.QWidget):
 
         h = float(self.height())
         w = float(self._item_w)
-
-        track = QtCore.QRectF(self.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
-        p.setPen(QtGui.QPen(QtGui.QColor(dayu_theme.border_color), 1))
-        p.setBrush(QtGui.QColor(dayu_theme.background_in_color))
-        p.drawRoundedRect(track, track.height() / 2, track.height() / 2)
-
         accent = QtGui.QColor(dayu_theme.primary_color)
-        pill = QtCore.QRectF(self._x, 0, w, h).adjusted(2, 2, -2, -2)
+
+        # Sober style: numbered links with a 2 px underline that slides to the active step.
+        font = self.font()
+        font.setWeight(QtGui.QFont.Weight.Medium)
+        small = QtGui.QFont(font)
+        small.setPointSizeF(max(font.pointSizeF() - 2, 6))
+        metrics = QtGui.QFontMetricsF(font)
+        small_metrics = QtGui.QFontMetricsF(small)
+
+        for i, label in enumerate(self._labels):
+            cell = QtCore.QRectF(i * w, 0, w, h - 2)
+            under = abs(cell.x() - self._x) < w / 2
+            if under:
+                text_color = QtGui.QColor(dayu_theme.title_color)
+                num_color = accent
+            elif i < self._index:
+                text_color = QtGui.QColor(dayu_theme.primary_text_color)
+                num_color = QtGui.QColor(dayu_theme.secondary_text_color)
+            else:
+                text_color = QtGui.QColor(dayu_theme.secondary_text_color)
+                num_color = QtGui.QColor(dayu_theme.secondary_text_color)
+
+            num = f"{i + 1:02d}"
+            gap = 6.0
+            total = small_metrics.horizontalAdvance(num) + gap + metrics.horizontalAdvance(label)
+            x = cell.x() + (w - total) / 2
+            p.setFont(small)
+            p.setPen(num_color)
+            p.drawText(QtCore.QRectF(x, cell.y(), small_metrics.horizontalAdvance(num) + 1, cell.height()),
+                       QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignLeft, num)
+            p.setFont(font)
+            p.setPen(text_color)
+            p.drawText(QtCore.QRectF(x + small_metrics.horizontalAdvance(num) + gap, cell.y(),
+                                     metrics.horizontalAdvance(label) + 2, cell.height()),
+                       QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignLeft, label)
+
         p.setPen(QtCore.Qt.PenStyle.NoPen)
         p.setBrush(accent)
-        p.drawRoundedRect(pill, pill.height() / 2, pill.height() / 2)
-
-        font = self.font()
-        font.setWeight(QtGui.QFont.Weight.DemiBold)
-        p.setFont(font)
-
-        on_accent = _readable_on(accent)
-        for i, label in enumerate(self._labels):
-            cell = QtCore.QRectF(i * w, 0, w, h)
-            under_pill = abs(cell.x() - self._x) < w / 2
-            if under_pill:
-                color = on_accent
-            elif i < self._index:
-                color = QtGui.QColor(dayu_theme.title_color)
-            else:
-                color = QtGui.QColor(dayu_theme.secondary_text_color)
-            p.setPen(color)
-            p.drawText(cell, QtCore.Qt.AlignmentFlag.AlignCenter, label)
+        p.drawRect(QtCore.QRectF(self._x, h - 2, w, 2))
         p.end()

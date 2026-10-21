@@ -22,8 +22,8 @@ from .qt import get_scale_factor
 def get_theme_size():
     scale_factor_x, scale_factor_y = get_scale_factor()
     return {
-        "border_radius_large": int(12 * scale_factor_x),
-        "border_radius_base": int(8 * scale_factor_x),
+        "border_radius_large": int(8 * scale_factor_x),
+        "border_radius_base": int(6 * scale_factor_x),
         "border_radius_small": int(4 * scale_factor_x),
         "huge": int(48 * scale_factor_x),
         "large": int(40 * scale_factor_x),
@@ -55,8 +55,8 @@ def get_theme_size():
         "spin_box_icon_medium": int(10 * scale_factor_x),
         "spin_box_icon_small": int(8 * scale_factor_x),
         "spin_box_icon_tiny": int(6 * scale_factor_x),
-        "drag_border": int(2 * scale_factor_x),
-        "drag_border_radius": int(28 * scale_factor_x),
+        "drag_border": int(1 * scale_factor_x),
+        "drag_border_radius": int(8 * scale_factor_x),
         "drag_padding_x": int(20 * scale_factor_x),
         "drag_padding_y": int(40 * scale_factor_x),
         "drag_size": int(60 * scale_factor_x),
@@ -279,22 +279,23 @@ class MTheme(object):
             return get_theme_size().get(item, 0)
 
     def _dark(self):
-        self.title_color = "#F3F0E8"
-        self.primary_text_color = "#E4E1D9"
-        self.secondary_text_color = "#A09DB3"
-        self.disable_color = "#6B6A7A"
-        self.border_color = "#2F2E3B"
-        self.divider_color = "#2F2E3B"
-        self.header_color = "#15141B"
-        self.icon_color = "#A09DB3"
+        self.title_color = "#F0EEE9"
+        self.primary_text_color = "#D9D6CF"
+        self.secondary_text_color = "#98927F"
+        self.disable_color = "#5F5B50"
+        self.border_color = "#262523"
+        self.divider_color = "#262523"
+        self.header_color = "#0A0908"
+        self.icon_color = "#98927F"
+        self.drag_border_color = "#4A4842"
 
         # "Ink" palette: ground 900, cards/inputs 800, raised/hover 700
-        self.background_color = "#15141B"
-        self.background_selected_color = "#2A2936"
-        self.background_in_color = "#1D1C26"
-        self.background_out_color = "#2A2936"
+        self.background_color = "#0A0908"
+        self.background_selected_color = "#201F1D"
+        self.background_in_color = "#151413"
+        self.background_out_color = "#201F1D"
         self.mask_color = utils.fade_color(self.background_color, "90%")
-        self.toast_color = "#2A2936"
+        self.toast_color = "#201F1D"
 
     def _light(self):
         self.title_color = "#262626"
@@ -305,6 +306,7 @@ class MTheme(object):
         self.divider_color = "#e8e8e8"
         self.header_color = "#fafafa"
         self.icon_color = "#8c8c8c"
+        self.drag_border_color = "#bfbfbf"
 
         self.background_color = "#f8f8f9"
         self.background_selected_color = "#bfbfbf"

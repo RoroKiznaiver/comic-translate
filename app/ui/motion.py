@@ -1,11 +1,12 @@
 """Motion tokens and helpers shared by the UI.
 
-These mirror the design prototype ("Langage de mouvement"):
+These mirror the sober design prototype (B, inspired by nakanime): short,
+ease-out, no overshoot.
 
-    pill      450 ms  OutQuart   active step slides along the stepper
+    pill      300 ms  OutCubic   the step underline slides along the stepper
     disclose  300 ms  OutCubic   advanced options grow/shrink
-    enter     500 ms  OutCubic   a screen or panel comes in
-    pop       400 ms  OutBack    floating elements (toasts) appear with a little overshoot
+    enter     300 ms  OutCubic   a screen or panel comes in
+    pop       200 ms  OutCubic   small floating elements (toasts) appear
 
 A single user setting, ``ui/reduce_motion``, switches every animation off: the
 helpers then jump straight to the end state.
@@ -14,14 +15,14 @@ helpers then jump straight to the end state.
 from PySide6 import QtCore
 from PySide6.QtCore import QSettings
 
-PILL_MS = 450
+PILL_MS = 300
 DISCLOSE_MS = 300
-ENTER_MS = 500
-POP_MS = 400
+ENTER_MS = 300
+POP_MS = 200
 
-CURVE_PILL = QtCore.QEasingCurve.Type.OutQuart
+CURVE_PILL = QtCore.QEasingCurve.Type.OutCubic
 CURVE_STANDARD = QtCore.QEasingCurve.Type.OutCubic
-CURVE_POP = QtCore.QEasingCurve.Type.OutBack
+CURVE_POP = QtCore.QEasingCurve.Type.OutCubic
 
 _QWIDGETSIZE_MAX = 16777215
 

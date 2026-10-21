@@ -476,7 +476,7 @@ MToolButton::menu-indicator {
 MDragFileButton, MDragFolderButton{
     color: @primary_text_color;
     background-color: @background_in_color;
-    border: @drag_border@unit dashed @primary_5;
+    border: @drag_border@unit dashed @drag_border_color;
     border-radius: @drag_border_radius@unit;
     padding: @drag_padding_x@unit @drag_padding_y@unit;
 }

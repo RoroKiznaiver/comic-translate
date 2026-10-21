@@ -62,11 +62,11 @@ class _NewCard(QtWidgets.QFrame):
 
     def apply_theme(self, is_dark: bool):
         if is_dark:
-            border   = "#2F2E3B"
-            bg       = "#1D1C26"
-            bg_prev  = "#2A2936"
-            bg_lbl   = "#1D1C26"
-            fg_lbl   = "#A09DB3"
+            border   = "#262523"
+            bg       = "#151413"
+            bg_prev  = "#201F1D"
+            bg_lbl   = "#151413"
+            fg_lbl   = "#98927F"
             hover_b  = dayu_theme.primary_color or "#1890ff"
         else:
             border   = "#d0d0d0"
@@ -195,7 +195,7 @@ class _RecentRow(QtWidgets.QFrame):
     def apply_theme(self, is_dark: bool):
         self._is_dark = is_dark
         if is_dark:
-            self._fg       = "#E4E1D9"
+            self._fg       = "#D9D6CF"
             self._fg_sub   = "#8E8CA0"
             self._date_fg  = "#8E8CA0"
             self._hover    = "rgba(255,255,255,0.06)"
@@ -259,11 +259,11 @@ class _RecentRow(QtWidgets.QFrame):
         menu = QtWidgets.QMenu(self)
         is_dark = bool(getattr(self, "_is_dark", True))
         if is_dark:
-            menu_bg = "#1D1C26"
-            menu_border = "#2F2E3B"
-            item_fg = "#E4E1D9"
+            menu_bg = "#151413"
+            menu_border = "#262523"
+            item_fg = "#D9D6CF"
             item_hover = "rgba(255,255,255,0.10)"
-            sep = "#2F2E3B"
+            sep = "#262523"
         else:
             menu_bg = "#ffffff"
             menu_border = "#d9d9d9"
@@ -382,9 +382,9 @@ class _PillButton(QtWidgets.QPushButton):
     def apply_theme(self, is_dark: bool):
         if is_dark:
             normal_bg   = "transparent"
-            normal_fg   = "#A09DB3"
+            normal_fg   = "#98927F"
             checked_bg  = dayu_theme.primary_color or "#FFC857"
-            checked_fg  = "#15141B"
+            checked_fg  = "#0A0908"
             hover_bg    = "rgba(255,255,255,0.08)"
         else:
             normal_bg   = "transparent"
@@ -657,14 +657,14 @@ class StartupHomeScreen(QtWidgets.QWidget):
     def _refresh_theme(self):
         d = self._is_dark
         if d:
-            fg       = "#E4E1D9"
-            fg_sub   = "#A09DB3"
-            hdr_fg   = "#A09DB3"
-            div      = "#2F2E3B"
-            sb_bg    = "#1D1C26"
-            sb_fg    = "#E4E1D9"
+            fg       = "#D9D6CF"
+            fg_sub   = "#98927F"
+            hdr_fg   = "#98927F"
+            div      = "#262523"
+            sb_bg    = "#151413"
+            sb_fg    = "#D9D6CF"
             sb_ph    = "#8E8CA0"
-            sb_brd   = "#2F2E3B"
+            sb_brd   = "#262523"
         else:
             fg       = "#262626"
             fg_sub   = "#666"
