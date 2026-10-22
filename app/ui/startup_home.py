@@ -397,7 +397,7 @@ class _PillButton(QtWidgets.QPushButton):
                 background: {normal_bg};
                 color: {normal_fg};
                 border: none;
-                border-radius: 14px;
+                border-radius: 6px;
                 padding: 4px 16px;
                 font-size: 12px;
                 font-weight: 500;
@@ -698,7 +698,7 @@ class StartupHomeScreen(QtWidgets.QWidget):
                 background: {sb_bg};
                 color: {sb_fg};
                 border: 1px solid {sb_brd};
-                border-radius: 14px;
+                border-radius: 6px;
                 padding: 0 12px;
                 font-size: 12px;
             }}

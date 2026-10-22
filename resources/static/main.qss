@@ -708,7 +708,7 @@ MFontComboBox[combine=vertical][position=bottom]{
 
 MPushButton:disabled{
     color: @disable_color;
-    border: 2px dashed @disable_color;
+    border: 1px solid @border_color;
     background-color: @background_color;
 }
 
