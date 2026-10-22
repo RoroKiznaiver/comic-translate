@@ -388,7 +388,10 @@ class WorkspaceMixin:
 
         right_layout.addLayout(input_layout)
         right_layout.addWidget(self.text_render_widget)
-        right_layout.addWidget(tools_scroll, 1)
+        # In advanced mode the tools take all the spare height; in simple mode (tools
+        # hidden) this spacer keeps the language pickers at the top of the column.
+        right_layout.addWidget(tools_scroll, 1000)
+        right_layout.addStretch(1)
 
         right_widget = QtWidgets.QWidget()
         right_widget.setLayout(right_layout)
