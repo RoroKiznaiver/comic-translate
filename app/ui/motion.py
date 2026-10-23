@@ -29,11 +29,22 @@ CURVE_POP = QtCore.QEasingCurve.Type.OutCubic
 _QWIDGETSIZE_MAX = 16777215
 
 
-def spring_curve(damping: float = 0.8) -> QtCore.QEasingCurve:
-    """A QEasingCurve that follows a damped spring (see app/ui/spring.py)."""
-    curve = QtCore.QEasingCurve()
-    curve.setCustomType(lambda t, d=damping: spring_progress(t, d))
-    return curve
+def spring_animation(owner, duration: int, damping: float, apply, on_finished=None):
+    """Drive ``apply(progress)`` with a damped spring over ``duration`` ms.
+
+    Only public Qt API is used (a linear QVariantAnimation 0 -> 1 whose value is
+    mapped through the spring), so there is no custom easing callback for Qt to
+    call back into. Returns the animation; the caller starts and keeps it.
+    """
+    anim = QtCore.QVariantAnimation(owner)
+    anim.setStartValue(0.0)
+    anim.setEndValue(1.0)
+    anim.setDuration(duration)
+    anim.setEasingCurve(QtCore.QEasingCurve.Type.Linear)
+    anim.valueChanged.connect(lambda v: apply(spring_progress(float(v), damping)))
+    if on_finished is not None:
+        anim.finished.connect(on_finished)
+    return anim
 
 
 def animations_enabled() -> bool:
@@ -71,11 +82,8 @@ def reveal(widget, show: bool, duration: int = DISCLOSE_MS) -> None:
     else:
         start, end = widget.height(), 0
 
-    anim = QtCore.QPropertyAnimation(widget, b"maximumHeight", widget)
-    anim.setDuration(duration)
-    anim.setEasingCurve(spring_curve(1.0))
-    anim.setStartValue(start)
-    anim.setEndValue(end)
+    def _apply(progress: float) -> None:
+        widget.setMaximumHeight(max(0, int(round(start + (end - start) * progress))))
 
     def _done() -> None:
         widget.setMaximumHeight(_QWIDGETSIZE_MAX)
@@ -83,6 +91,6 @@ def reveal(widget, show: bool, duration: int = DISCLOSE_MS) -> None:
             widget.setVisible(False)
         widget._reveal_anim = None
 
-    anim.finished.connect(_done)
+    anim = spring_animation(widget, duration, 1.0, _apply, _done)
     widget._reveal_anim = anim
     anim.start()

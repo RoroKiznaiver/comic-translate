@@ -3,7 +3,7 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from app.ui.dayu_widgets import dayu_theme
-from app.ui.motion import PILL_MS, animations_enabled, spring_curve
+from app.ui.motion import PILL_MS, animations_enabled, spring_animation
 
 
 class StepPill(QtWidgets.QWidget):
@@ -17,7 +17,7 @@ class StepPill(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)
         self.setAccessibleName(self.tr("Steps"))
 
-        self._anim = QtCore.QPropertyAnimation(self, b"indicatorX", self)
+        self._anim = None
 
     # Animated property: x offset of the pill, in pixels.
     def _get_indicator_x(self) -> float:
@@ -38,14 +38,18 @@ class StepPill(QtWidgets.QWidget):
             return
         self._index = index
         target = float(index * self._item_w)
-        self._anim.stop()
+        if self._anim is not None:
+            self._anim.stop()
+            self._anim = None
         if not animate or not animations_enabled() or not self.isVisible():
             self._set_indicator_x(target)
             return
-        self._anim.setDuration(PILL_MS)
-        self._anim.setEasingCurve(spring_curve(0.8))
-        self._anim.setStartValue(self._x)
-        self._anim.setEndValue(target)
+        start = self._x
+        self._anim = spring_animation(
+            self, PILL_MS, 0.8,
+            lambda p: self._set_indicator_x(start + (target - start) * p),
+            lambda: self._set_indicator_x(target),
+        )
         self._anim.start()
 
     def paintEvent(self, event: QtGui.QPaintEvent) -> None:  # type: ignore[override]
