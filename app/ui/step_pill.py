@@ -3,7 +3,7 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from app.ui.dayu_widgets import dayu_theme
-from app.ui.motion import CURVE_PILL, PILL_MS, animations_enabled
+from app.ui.motion import PILL_MS, animations_enabled, spring_curve
 
 
 class StepPill(QtWidgets.QWidget):
@@ -43,7 +43,7 @@ class StepPill(QtWidgets.QWidget):
             self._set_indicator_x(target)
             return
         self._anim.setDuration(PILL_MS)
-        self._anim.setEasingCurve(CURVE_PILL)
+        self._anim.setEasingCurve(spring_curve(0.8))
         self._anim.setStartValue(self._x)
         self._anim.setEndValue(target)
         self._anim.start()
