@@ -11,7 +11,7 @@ class AboutPage(QtWidgets.QWidget):
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(20)
 
-        title_label = MLabel(self.tr("App Information")).h3()
+        title_label = MLabel(self.tr("About Bulle")).h3()
         layout.addWidget(title_label)
         
         # Version Info

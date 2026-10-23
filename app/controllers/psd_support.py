@@ -25,7 +25,7 @@ def require_photoshopapi() -> ModuleType:
         details = str(exc) or type(exc).__name__
         raise PsdSupportUnavailableError(
             "PSD import and export are unavailable because PhotoshopAPI could not be loaded. "
-            "Other Comic Translate features can still be used. "
+            "Other Bulle features can still be used. "
             f"Details: {details}"
         ) from exc
 

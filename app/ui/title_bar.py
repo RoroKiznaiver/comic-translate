@@ -1,4 +1,4 @@
-"""Custom frameless title bar for Comic Translate."""
+"""Custom frameless title bar for Bulle."""
 
 from __future__ import annotations
 

@@ -72,7 +72,7 @@ class ComicTranslateUI(
         if sys.platform == "win32":
             self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground, True)
             self._win_snap_style_applied = False
-        self.setWindowTitle("Comic Translate[*]")
+        self.setWindowTitle("Bulle[*]")
 
         screen = QtWidgets.QApplication.primaryScreen()
         geo = screen.geometry()

@@ -27,7 +27,7 @@ def get_user_data_dir(app_name: str = "ComicTranslate") -> str:
     return os.path.join(base_dir, app_name)
 
 
-def get_default_project_autosave_dir(folder_name: str = "Comic Translate") -> str:
+def get_default_project_autosave_dir(folder_name: str = "Bulle") -> str:
     """
     Returns a user-facing default folder for project auto-save files.
 

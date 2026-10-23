@@ -22,7 +22,7 @@ class NavRailMixin:
 
         self.new_project_button = MToolButton()
         self.new_project_button.set_dayu_svg("file.svg")
-        self.new_project_button.setToolTip(self.tr("New Project"))
+        self.new_project_button.setToolTip(self.tr("New project (erases the current work)"))
 
         self.tool_browser = MToolButton()
         self.tool_browser.set_dayu_svg("folder-open.svg")
@@ -141,7 +141,7 @@ class NavRailMixin:
             {
                 "svg": "home_line.svg",
                 "checkable": True,
-                "tooltip": self.tr("Home"),
+                "tooltip": self.tr("Back to translation"),
                 "clicked": self.show_main_page,
             },
             {
@@ -198,8 +198,14 @@ class NavRailMixin:
         nav_rail_layout.addWidget(self.save_all_button)
         nav_rail_layout.addWidget(nav_divider)
         nav_rail_layout.addWidget(self.search_sidebar_button)
-        nav_rail_layout.addWidget(nav_tool_group)
+        # Navigation (Start / Back to translation / Settings) lives at the bottom,
+        # clearly apart from the project actions above, so "New project" is never
+        # mistaken for "go back to my work".
         nav_rail_layout.addStretch()
+        nav_divider_bottom = MDivider()
+        nav_divider_bottom.setFixedWidth(30)
+        nav_rail_layout.addWidget(nav_divider_bottom)
+        nav_rail_layout.addWidget(nav_tool_group)
         nav_rail_layout.setContentsMargins(0, 0, 0, 0)
 
         return nav_rail_layout
