@@ -148,7 +148,10 @@ class MComboBox(MComboBoxSearchMixin, QtWidgets.QComboBox):
     def eventFilter(self, widget, event):
         if widget is self.lineEdit() and widget.isReadOnly():
             if event.type() == QtCore.QEvent.MouseButtonPress:
-                self.showPopup()
+                # Open the list once the press is fully handled, and swallow the
+                # press: otherwise the popup can be dismissed by the same click.
+                QtCore.QTimer.singleShot(0, self.showPopup)
+                return True
         return super(MComboBox, self).eventFilter(widget, event)
 
     def huge(self):

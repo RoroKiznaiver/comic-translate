@@ -57,25 +57,21 @@ class SettingsPageUI(QtWidgets.QWidget):
         self.inpainters = ['LaMa', 'AOT']
         self.detectors = ['RT-DETR-v2']
         self.ocr_engines = [
-            self.tr("Default"), 
-            self.tr('Microsoft OCR'), 
-            self.tr('Gemini-2.5-Flash-Lite'), 
+            self.tr("Default"),
         ]
         self.inpaint_strategy = [self.tr('Resize'), self.tr('Original'), self.tr('Crop')]
         self.themes = [self.tr('Dark'), self.tr('Light')]
         self.alignment = [self.tr("Left"), self.tr("Center"), self.tr("Right")]
 
         self.credential_services = [
-            self.tr("Custom"), 
+            self.tr("Google Gemini"),
+            self.tr("Custom"),
         ]
         
         self.supported_translators = [
             self.tr("Gemini-3.1-Flash-Lite"),
-            self.tr("GPT-4.1"),
-            self.tr("GPT-4.1-mini"),
-            self.tr("Claude-4.6-Sonnet"),
-            self.tr("Claude-4.5-Haiku"),
-            self.tr("Deepseek"),
+            self.tr("Gemini-2.5-Flash-Lite"),
+            self.tr("Gemini-2.5-Pro"),
             self.tr("Custom"),
         ]
         
@@ -180,10 +176,7 @@ class SettingsPageUI(QtWidgets.QWidget):
         label = item.get("label", item["id"])
         if item.get("id") == "Custom":
             return label
-        credits = int(item.get("credits", 0))
-        if is_ocr:
-            return f"{label} (+{credits} Credit{'s' if credits != 1 else ''})" if credits else label
-        return f"{label} ({credits} Credit{'s' if credits != 1 else ''})"
+        return label  # no credits system: plain model names
     def _replace_combo_items(self, combo, items: list[dict], include_custom: bool = False) -> None:
         current_id = combo.currentData() or combo.currentText()
         by_id = {item["id"]: item for item in items}
@@ -352,6 +345,8 @@ class SettingsPageUI(QtWidgets.QWidget):
             nav_card = ClickMeta(extra=False)
             nav_card.setup_data(setting)
             nav_card.clicked.connect(lambda i=index, c=nav_card: self.on_nav_clicked(i, c))
+            if index == 1:  # "Account": Bulle has no online account
+                nav_card.setVisible(False)
             navbar_layout.addWidget(nav_card)
             self.nav_cards.append(nav_card)
 

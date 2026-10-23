@@ -30,6 +30,18 @@ class Messages:
         )
 
     @staticmethod
+    def show_missing_api_key_error(parent, service: str):
+        MMessage.error(
+            text=QCoreApplication.translate(
+                "Messages",
+                "Missing API key for {service}.\nGo to Settings > Credentials and paste your key."
+            ).format(service=service),
+            parent=parent,
+            duration=None,
+            closable=True
+        )
+
+    @staticmethod
     def show_not_logged_in_error(parent):
         MMessage.error(
             text=QCoreApplication.translate(
@@ -110,8 +122,8 @@ class Messages:
         MMessage.error(
             text=QCoreApplication.translate(
                 "Messages",
-                "Custom requires advanced API configuration. Most users should use the Credits system instead.\n"
-                "Please sign in via Settings > Account to use credits, or configure Custom API settings in Settings > Advanced."
+                "Custom needs an API key, an endpoint URL and a model name.\n"
+                "Fill them in under Settings > Credentials > Custom."
             ),
             parent=parent,
             duration=None,

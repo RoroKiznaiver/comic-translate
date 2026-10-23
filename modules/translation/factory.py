@@ -77,10 +77,6 @@ class TranslationFactory:
     def _get_engine_class(cls, translator_key: str):
         """Get the appropriate engine class based on translator key."""
 
-        access_token = get_token("access_token")
-        if access_token and translator_key not in ['Custom']:
-            return UserTranslator
-
         # First check if it's a traditional translation engine (exact match)
         if translator_key in cls.TRADITIONAL_ENGINES:
             return cls.TRADITIONAL_ENGINES[translator_key]

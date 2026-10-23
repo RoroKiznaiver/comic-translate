@@ -18,8 +18,8 @@ class CredentialsPage(QtWidgets.QWidget):
         self.save_keys_checkbox = MCheckBox(self.tr("Save Keys"))
 
         info_label = MLabel(self.tr(
-            "These settings are for advanced users who wish to use their own Custom API endpoints (e.g. Local Language Models) for translation. "
-            "For most users, no configuration is needed here."
+            "Paste your Google Gemini API key here (free key: aistudio.google.com/apikey), then pick a Gemini model in Settings > Tools > Translator. "
+            "The Custom section is for any other OpenAI-compatible endpoint (e.g. local language models)."
         )).secondary()
         info_label.setWordWrap(True)
         

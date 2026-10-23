@@ -1,19 +1,10 @@
-"""Cached client-capability catalog fetched from the Comic Translate API."""
+"""Local catalog of translators, OCR models and target languages (no network)."""
 
-import json
-import logging
-import threading
 from typing import Any
 
-import requests
-from PySide6.QtCore import QObject, QSettings, Signal
-
-from app.account.config import API_BASE_URL
+from PySide6.QtCore import QObject, Signal
 from modules.utils.language_utils import language_codes
 
-logger = logging.getLogger(__name__)
-
-_SETTINGS_KEY = "client_catalog/json"
 _SCHEMA_VERSION = 1
 
 
@@ -32,24 +23,18 @@ class ClientCatalog(QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._settings = QSettings("ComicLabs", "ComicTranslate")
 
     @staticmethod
     def fallback() -> dict[str, Any]:
         return {
             "schema_version": _SCHEMA_VERSION,
             "translators": [
-                {"id": "Gemini-3.1-Flash-Lite", "label": "Gemini-3.1-Flash-Lite", "credits": 1},
-                {"id": "GPT-4.1", "label": "GPT-4.1", "credits": 3},
-                {"id": "GPT-4.1-mini", "label": "GPT-4.1-mini", "credits": 1},
-                {"id": "Claude-4.6-Sonnet", "label": "Claude-4.6-Sonnet", "credits": 3},
-                {"id": "Claude-4.5-Haiku", "label": "Claude-4.5-Haiku", "credits": 1},
-                {"id": "Deepseek", "label": "Deepseek", "credits": 1},
+                {"id": "Gemini-3.1-Flash-Lite", "label": "Gemini-3.1-Flash-Lite", "credits": 0},
+                {"id": "Gemini-2.5-Flash-Lite", "label": "Gemini-2.5-Flash-Lite", "credits": 0},
+                {"id": "Gemini-2.5-Pro", "label": "Gemini-2.5-Pro", "credits": 0},
             ],
             "ocr_models": [
                 {"id": "Default", "label": "Default", "credits": 0},
-                {"id": "Microsoft OCR", "label": "Microsoft OCR", "credits": 1},
-                {"id": "Gemini-2.5-Flash-Lite", "label": "Gemini-2.5-Flash-Lite", "credits": 1},
             ],
             "image_context_credits": 1,
             "target_languages": [
@@ -68,30 +53,11 @@ class ClientCatalog(QObject):
         }
 
     def load(self) -> dict[str, Any]:
-        raw = self._settings.value(_SETTINGS_KEY, "")
-        try:
-            catalog = json.loads(raw) if raw else None
-        except (TypeError, json.JSONDecodeError):
-            catalog = None
-        return catalog if self._is_valid(catalog) else self.fallback()
+        return self.fallback()
 
     def refresh_async(self) -> None:
-        threading.Thread(target=self._refresh, name="client-catalog", daemon=True).start()
-
-    def _refresh(self) -> None:
-        try:
-            response = requests.get(f"{API_BASE_URL}/api/v1/client-catalog", timeout=5)
-            response.raise_for_status()
-            catalog = response.json()
-            if not self._is_valid(catalog):
-                raise ValueError("unsupported or malformed catalog")
-            # QSettings instances must not be shared across threads.
-            QSettings("ComicLabs", "ComicTranslate").setValue(
-                _SETTINGS_KEY, json.dumps(catalog, separators=(",", ":"))
-            )
-            self.updated.emit(catalog)
-        except (requests.RequestException, ValueError, TypeError) as exc:
-            logger.info("Using cached client catalog: %s", exc)
+        """Bulle works fully offline: nothing is fetched from any server."""
+        return None
 
     @staticmethod
     def _is_valid(catalog: Any) -> bool:
