@@ -157,6 +157,7 @@ class ComicTranslateUI(
 
     def _init_ui(self):
         outer_widget = QtWidgets.QWidget(self)
+        outer_widget.setObjectName("shell")
         outer_layout = QtWidgets.QVBoxLayout(outer_widget)
         outer_layout.setContentsMargins(0, 0, 0, 0)
         outer_layout.setSpacing(0)
@@ -168,6 +169,7 @@ class ComicTranslateUI(
         self._edge_resizer = EdgeResizer(self)
 
         main_widget = QtWidgets.QWidget()
+        main_widget.setObjectName("shell")
         self.main_layout = QtWidgets.QHBoxLayout()
         main_widget.setLayout(self.main_layout)
         outer_layout.addWidget(main_widget)
@@ -333,11 +335,17 @@ class ComicTranslateUI(
             super().showEvent(event)
             if not self._win_snap_style_applied:
                 self._apply_windows_snap_window_style()
+            if hasattr(self, "_is_dark_theme") and not getattr(self, "_material_active", False):
+                # The native window exists now: (re)try the system material.
+                self.apply_theme_material_only()
 
         def paintEvent(self, event: QtGui.QPaintEvent) -> None:  # type: ignore[override]
             p = QtGui.QPainter(self)
             p.setCompositionMode(QtGui.QPainter.CompositionMode.CompositionMode_Source)
-            p.fillRect(self.rect(), self.palette().window())
+            if getattr(self, "_material_active", False):
+                p.fillRect(self.rect(), QtCore.Qt.GlobalColor.transparent)   # let Mica/Acrylic show through
+            else:
+                p.fillRect(self.rect(), self.palette().window())
             p.end()
             super().paintEvent(event)
 
@@ -433,14 +441,35 @@ class ComicTranslateUI(
 
             return HTCLIENT
 
-    def _apply_title_bar_style(self, theme: str) -> None:
+    def _apply_title_bar_style(self, theme: str, transparent: bool = False) -> None:
         if not hasattr(self, "title_bar"):
             return
         light = (theme == self.settings_page.ui.tr("Light")) if hasattr(self, "settings_page") else False
         if light:
-            self.title_bar.apply_style(bg="#F2F2F7", fg="#1C1C1E", hover="rgba(0,0,0,25)")
+            self.title_bar.apply_style(bg="#F2F2F7", fg="#1C1C1E", hover="rgba(0,0,0,25)", transparent=transparent)
         else:
-            self.title_bar.apply_style(bg="#1C1C1E", fg="#FFFFFF", hover="rgba(255,255,255,30)")
+            self.title_bar.apply_style(bg="#1C1C1E", fg="#FFFFFF", hover="rgba(255,255,255,30)", transparent=transparent)
+
+    def apply_theme_material_only(self) -> None:
+        active = self._apply_material(self._is_dark_theme)
+        self._material_active = active
+        if active:
+            self._apply_title_bar_style(self.settings_page.get_theme() if hasattr(self.settings_page, "get_theme") else "Dark", transparent=True)
+            self.update()
+
+    def _apply_material(self, is_dark: bool) -> bool:
+        """Mica/Acrylic behind the sidebar and title bar (Windows 11 only). True when active."""
+        from PySide6.QtCore import QSettings
+        from app.ui import backdrop
+        kind = str(QSettings("ComicLabs", "ComicTranslate").value("ui/material", "mica"))
+        if kind == "off" or not backdrop.supported():
+            backdrop.disable(self)
+            return False
+        if not backdrop.enable(self, is_dark, kind):
+            return False
+        # Let the system material show through the shell; content pages stay opaque.
+        self.setStyleSheet(self.styleSheet() + "\nQMainWindow, QWidget#shell, MToolButtonGroup, MDivider{background:transparent;}")
+        return True
 
     @staticmethod
     def _accent_key() -> str:
@@ -463,7 +492,10 @@ class ComicTranslateUI(
             is_dark = True
 
         dayu_theme.apply(self)
-        self._apply_title_bar_style(theme)
+        self._is_dark_theme = is_dark
+        material = self._apply_material(is_dark)
+        self._material_active = material
+        self._apply_title_bar_style(theme, transparent=material)
 
         if self.startup_home:
             self.startup_home.apply_theme(is_dark)

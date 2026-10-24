@@ -833,7 +833,7 @@ class CustomTitleBar(QtWidgets.QWidget):
         if icon and not icon.isNull():
             self.icon_label.setPixmap(icon.pixmap(20, 20))
 
-    def apply_style(self, bg: str, fg: str, hover: str) -> None:
+    def apply_style(self, bg: str, fg: str, hover: str, transparent: bool = False) -> None:
         """Apply theme-aware colours.  Call from ``apply_theme``."""
         fg_color = QtGui.QColor(fg)
         hover_color = _parse_qcolor(hover)
@@ -854,7 +854,7 @@ class CustomTitleBar(QtWidgets.QWidget):
 
         self.setStyleSheet(f"""
             CustomTitleBar {{
-                background-color: {bg};
+                background-color: {"transparent" if transparent else bg};
             }}
             QWidget#titleBarToolsHost {{
                 background: transparent;

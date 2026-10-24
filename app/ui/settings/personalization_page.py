@@ -5,6 +5,7 @@ from .utils import create_title_and_combo, set_combo_box_width
 class PersonalizationPage(QtWidgets.QWidget):
     accent_changed = QtCore.Signal(str)
     glass_changed = QtCore.Signal(int)
+    material_changed = QtCore.Signal(str)
 
     def __init__(self, languages: list[str], themes: list[str], parent=None):
         super().__init__(parent)
@@ -27,6 +28,16 @@ class PersonalizationPage(QtWidgets.QWidget):
         if current in self._accent_keys:
             self.accent_combo.setCurrentIndex(self._accent_keys.index(current))
         self.accent_combo.currentIndexChanged.connect(self._on_accent_index)
+
+        # Window material (Windows 11 only): real frosted backdrop behind the sidebar
+        self._material_keys = ["mica", "acrylic", "off"]
+        material_labels = [self.tr("Mica"), self.tr("Acrylic"), self.tr("Off")]
+        material_widget, self.material_combo = create_title_and_combo(self.tr("Window material (Windows 11)"), material_labels)
+        set_combo_box_width(self.material_combo, material_labels)
+        cur_mat = str(QSettings("ComicLabs", "ComicTranslate").value("ui/material", "mica"))
+        if cur_mat in self._material_keys:
+            self.material_combo.setCurrentIndex(self._material_keys.index(cur_mat))
+        self.material_combo.currentIndexChanged.connect(self._on_material_index)
 
         # Liquid Glass transparency: ultra clear <-> fully tinted
         glass_row = QtWidgets.QWidget()
@@ -72,10 +83,17 @@ class PersonalizationPage(QtWidgets.QWidget):
         layout.addWidget(theme_widget)
         layout.addWidget(accent_widget)
         layout.addWidget(glass_row)
+        layout.addWidget(material_widget)
         layout.addWidget(self.reduce_motion_checkbox)
         layout.addWidget(self.memory_checkbox)
         layout.addWidget(self.memory_clear_button, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
         layout.addStretch()
+
+    def _on_material_index(self, index: int) -> None:
+        if 0 <= index < len(self._material_keys):
+            key = self._material_keys[index]
+            QSettings("ComicLabs", "ComicTranslate").setValue("ui/material", key)
+            self.material_changed.emit(key)
 
     def _apply_glass(self) -> None:
         value = int(self.glass_slider.value())
