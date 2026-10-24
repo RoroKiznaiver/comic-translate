@@ -12,7 +12,7 @@ A single user setting, ``ui/reduce_motion``, switches every animation off: the
 helpers then jump straight to the end state.
 """
 
-from PySide6 import QtCore
+from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import QSettings
 
 from app.ui.spring import spring_progress
@@ -93,4 +93,29 @@ def reveal(widget, show: bool, duration: int = DISCLOSE_MS) -> None:
 
     anim = spring_animation(widget, duration, 1.0, _apply, _done)
     widget._reveal_anim = anim
+    anim.start()
+
+
+def fade_in(widget, duration: int = 320) -> None:
+    """Fade ``widget`` in with a spring. No-op when animations are off or the
+    widget is not on screen; the opacity effect is removed when done so it never
+    costs anything afterwards."""
+    if widget is None or not animations_enabled() or not widget.isVisible():
+        return
+    previous = getattr(widget, "_fade_anim", None)
+    if previous is not None:
+        previous.stop()
+    effect = QtWidgets.QGraphicsOpacityEffect(widget)
+    effect.setOpacity(0.0)
+    widget.setGraphicsEffect(effect)
+
+    def _apply(progress: float) -> None:
+        effect.setOpacity(max(0.0, min(1.0, progress)))
+
+    def _done() -> None:
+        widget.setGraphicsEffect(None)
+        widget._fade_anim = None
+
+    anim = spring_animation(widget, duration, 1.0, _apply, _done)
+    widget._fade_anim = anim
     anim.start()

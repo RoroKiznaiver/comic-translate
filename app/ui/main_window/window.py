@@ -6,6 +6,7 @@ if sys.platform == "win32":
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from app.ui.canvas.image_viewer import ImageViewer
+from app.ui.motion import fade_in
 from app.ui.dayu_widgets import dayu_theme
 from app.ui.dayu_widgets.divider import MDivider
 from app.ui.dayu_widgets.theme import MTheme
@@ -187,6 +188,7 @@ class ComicTranslateUI(
         self._center_stack.addWidget(self.main_content_widget)
         self._center_stack.addWidget(self.settings_page)
 
+        self._center_stack.currentChanged.connect(lambda _i: fade_in(self._center_stack.currentWidget()))
         self._center_stack.setCurrentWidget(self.startup_home)
         self._set_document_tools_visible(False)
 
