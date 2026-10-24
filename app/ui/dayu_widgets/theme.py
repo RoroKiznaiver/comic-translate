@@ -22,9 +22,9 @@ from .qt import get_scale_factor
 def get_theme_size():
     scale_factor_x, scale_factor_y = get_scale_factor()
     return {
-        "border_radius_large": int(8 * scale_factor_x),
-        "border_radius_base": int(6 * scale_factor_x),
-        "border_radius_small": int(4 * scale_factor_x),
+        "border_radius_large": int(14 * scale_factor_x),
+        "border_radius_base": int(10 * scale_factor_x),
+        "border_radius_small": int(6 * scale_factor_x),
         "huge": int(48 * scale_factor_x),
         "large": int(40 * scale_factor_x),
         "medium": int(32 * scale_factor_x),
@@ -56,7 +56,7 @@ def get_theme_size():
         "spin_box_icon_small": int(8 * scale_factor_x),
         "spin_box_icon_tiny": int(6 * scale_factor_x),
         "drag_border": int(1 * scale_factor_x),
-        "drag_border_radius": int(8 * scale_factor_x),
+        "drag_border_radius": int(14 * scale_factor_x),
         "drag_padding_x": int(20 * scale_factor_x),
         "drag_padding_y": int(40 * scale_factor_x),
         "drag_size": int(60 * scale_factor_x),
@@ -115,7 +115,9 @@ class MTheme(object):
     red = "#f5222d"
     orange = "#fa8c16"
     yellow = "#fadb14"
-    amber = "#FFC857"  # Bulle accent (dark theme primary)
+    amber = "#FFC857"  # flames / streak
+    apple_blue_dark = "#0A84FF"   # system blue, dark appearance
+    apple_blue_light = "#007AFF"  # system blue, light appearance
     volcano = "#fa541c"
     geekblue = "#2f54eb"
     lime = "#a0d911"
@@ -261,8 +263,8 @@ class MTheme(object):
     def _init_font(self):
         # font
         self.font_family = (
-            '"Instrument Sans",BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",'
-            '"Helvetica Neue",Helvetica,Arial,sans-serif'
+            '"SF Pro Text","SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",'
+            '"Inter","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif'
         )
         self.font_size_base = 9
         self.font_size_large = self.font_size_base + 2
@@ -279,41 +281,43 @@ class MTheme(object):
             return get_theme_size().get(item, 0)
 
     def _dark(self):
-        self.title_color = "#F0EEE9"
-        self.primary_text_color = "#D9D6CF"
-        self.secondary_text_color = "#98927F"
-        self.disable_color = "#5F5B50"
-        self.border_color = "#262523"
-        self.divider_color = "#262523"
-        self.header_color = "#0A0908"
-        self.icon_color = "#98927F"
-        self.drag_border_color = "#4A4842"
+        # Apple "dark appearance": grouped backgrounds, label hierarchy, system separators
+        self.title_color = "#FFFFFF"
+        self.primary_text_color = "#EBEBF5"
+        self.secondary_text_color = "#8E8E93"
+        self.disable_color = "#636366"
+        self.border_color = "#38383A"
+        self.divider_color = "#2C2C2E"
+        self.header_color = "#1C1C1E"
+        self.icon_color = "#8E8E93"
+        self.drag_border_color = "#48484A"
 
-        # "Ink" palette: ground 900, cards/inputs 800, raised/hover 700
-        self.background_color = "#0A0908"
-        self.background_selected_color = "#201F1D"
-        self.background_in_color = "#151413"
-        self.background_out_color = "#201F1D"
+        # ground 1C1C1E, cards/inputs 2C2C2E, raised/hover 3A3A3C
+        self.background_color = "#1C1C1E"
+        self.background_selected_color = "#3A3A3C"
+        self.background_in_color = "#2C2C2E"
+        self.background_out_color = "#3A3A3C"
         self.mask_color = utils.fade_color(self.background_color, "90%")
-        self.toast_color = "#201F1D"
+        self.toast_color = "#3A3A3C"
 
     def _light(self):
-        self.title_color = "#262626"
-        self.primary_text_color = "#595959"
-        self.secondary_text_color = "#8c8c8c"
-        self.disable_color = "#e5e5e5"
-        self.border_color = "#d9d9d9"
-        self.divider_color = "#e8e8e8"
-        self.header_color = "#fafafa"
-        self.icon_color = "#8c8c8c"
-        self.drag_border_color = "#bfbfbf"
+        # Apple "light appearance": systemGroupedBackground with white cards
+        self.title_color = "#1C1C1E"
+        self.primary_text_color = "#3A3A3C"
+        self.secondary_text_color = "#8E8E93"
+        self.disable_color = "#C7C7CC"
+        self.border_color = "#D1D1D6"
+        self.divider_color = "#E5E5EA"
+        self.header_color = "#F2F2F7"
+        self.icon_color = "#8E8E93"
+        self.drag_border_color = "#C7C7CC"
 
-        self.background_color = "#f8f8f9"
-        self.background_selected_color = "#bfbfbf"
-        self.background_in_color = "#ffffff"
-        self.background_out_color = "#eeeeee"
+        self.background_color = "#F2F2F7"
+        self.background_selected_color = "#D1D1D6"
+        self.background_in_color = "#FFFFFF"
+        self.background_out_color = "#E5E5EA"
         self.mask_color = utils.fade_color(self.background_color, "90%")
-        self.toast_color = "#333333"
+        self.toast_color = "#1C1C1E"
 
     def apply(self, widget):
         size_dict = get_theme_size()

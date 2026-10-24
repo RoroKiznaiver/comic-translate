@@ -6,7 +6,7 @@
     background-color: @background_color;
     font-size: @font_size_base@font_unit;
     selection-color: @text_color_inverse;
-    selection-background-color: #3b82f6;
+    selection-background-color: #0A84FF;
 }
 MDateTimeEdit::drop-down,
 MDateEdit::drop-down,
@@ -571,24 +571,24 @@ MCheckBox::indicator:indeterminate:disabled {
 }
 
 
-/* MPushButton */
+/* MPushButton: Apple-style filled buttons, no outline, soft press */
 MPushButton {
-    font-weight: 400;
-    border-radius: 5%;
+    font-weight: 500;
+    border-radius: @border_radius_base@unit;
     padding: 1% 10%;
 }
 
 MPushButton[dayu_type=default]{
     background-color: @background_out_color;
-    border: 1px solid @border_color;
+    border: 1px solid transparent;
 }
 MPushButton[dayu_type=default]:hover{
-    /*color: @primary_5;*/
-    border-color: @primary_5;
+    background-color: @background_selected_color;
+    border-color: transparent;
 }
 MPushButton[dayu_type=default]:pressed{
-    /*color: @primary_7;*/
-    border-color: @primary_7;
+    background-color: @background_in_color;
+    border-color: @border_color;
 }
 
 

@@ -12,6 +12,7 @@ from ...dayu_widgets.menu import MMenu
 from ...dayu_widgets.push_button import MPushButton
 from ...dayu_widgets.qt import MIcon
 from ...dayu_widgets.tool_button import MToolButton
+from ...logo_widget import BulleLogo
 
 
 class NavRailMixin:
@@ -189,6 +190,9 @@ class NavRailMixin:
         )
         self.insert_button.clicked.connect(self.insert_browser_button.clicked)
 
+        self.nav_logo = BulleLogo(38)
+        nav_rail_layout.addWidget(self.nav_logo, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)
+        nav_rail_layout.addSpacing(6)
         nav_rail_layout.addWidget(self.new_project_button)
         nav_rail_layout.addWidget(self.tool_browser)
         nav_rail_layout.addWidget(self.insert_button)

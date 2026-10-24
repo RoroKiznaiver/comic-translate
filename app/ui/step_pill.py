@@ -1,4 +1,4 @@
-"""Stepper (Import, Translate, Export): numbered links, underline slides to the active step."""
+"""Stepper (Import, Translate, Export): Apple-style segmented control, the thumb glides to the active step."""
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
@@ -53,49 +53,41 @@ class StepPill(QtWidgets.QWidget):
         self._anim.start()
 
     def paintEvent(self, event: QtGui.QPaintEvent) -> None:  # type: ignore[override]
+        """Apple-style segmented control: a rounded track and a raised thumb that glides to the active step."""
         p = QtGui.QPainter(self)
         p.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
 
         h = float(self.height())
         w = float(self._item_w)
-        accent = QtGui.QColor(dayu_theme.primary_color)
+        total_w = w * len(self._labels)
+        dark = QtGui.QColor(dayu_theme.background_color).lightness() < 128
 
-        # Sober style: numbered links with a 2 px underline that slides to the active step.
+        inset = 3.0
+        track = QtCore.QRectF(inset, inset, total_w - 2 * inset, h - 2 * inset)
+        radius = 10.0
+        p.setPen(QtCore.Qt.PenStyle.NoPen)
+        p.setBrush(QtGui.QColor("#2C2C2E" if dark else "#E3E3E8"))
+        p.drawRoundedRect(track, radius, radius)
+
+        # thumb (with a soft shadow underneath, like the system control)
+        thumb = QtCore.QRectF(self._x + inset + 2, inset + 2, w - 2 * inset - 4, h - 2 * inset - 4)
+        shadow = QtCore.QRectF(thumb).translated(0, 1.2)
+        p.setBrush(QtGui.QColor(0, 0, 0, 70 if dark else 38))
+        p.drawRoundedRect(shadow, radius - 2, radius - 2)
+        p.setBrush(QtGui.QColor("#636366" if dark else "#FFFFFF"))
+        p.drawRoundedRect(thumb, radius - 2, radius - 2)
+
         font = self.font()
         font.setWeight(QtGui.QFont.Weight.Medium)
-        small = QtGui.QFont(font)
-        small.setPointSizeF(max(font.pointSizeF() - 2, 6))
-        metrics = QtGui.QFontMetricsF(font)
-        small_metrics = QtGui.QFontMetricsF(small)
-
         for i, label in enumerate(self._labels):
-            cell = QtCore.QRectF(i * w, 0, w, h - 2)
-            under = abs(cell.x() - self._x) < w / 2
-            if under:
-                text_color = QtGui.QColor(dayu_theme.title_color)
-                num_color = accent
-            elif i < self._index:
-                text_color = QtGui.QColor(dayu_theme.primary_text_color)
-                num_color = QtGui.QColor(dayu_theme.secondary_text_color)
+            cell = QtCore.QRectF(i * w, 0, w, h)
+            active = abs(cell.x() - self._x) < w / 2
+            if active:
+                p.setPen(QtGui.QColor(dayu_theme.title_color if dark else "#1C1C1E"))
             else:
-                text_color = QtGui.QColor(dayu_theme.secondary_text_color)
-                num_color = QtGui.QColor(dayu_theme.secondary_text_color)
-
-            num = f"{i + 1:02d}"
-            gap = 6.0
-            total = small_metrics.horizontalAdvance(num) + gap + metrics.horizontalAdvance(label)
-            x = cell.x() + (w - total) / 2
-            p.setFont(small)
-            p.setPen(num_color)
-            p.drawText(QtCore.QRectF(x, cell.y(), small_metrics.horizontalAdvance(num) + 1, cell.height()),
-                       QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignLeft, num)
-            p.setFont(font)
-            p.setPen(text_color)
-            p.drawText(QtCore.QRectF(x + small_metrics.horizontalAdvance(num) + gap, cell.y(),
-                                     metrics.horizontalAdvance(label) + 2, cell.height()),
-                       QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignLeft, label)
-
-        p.setPen(QtCore.Qt.PenStyle.NoPen)
-        p.setBrush(accent)
-        p.drawRect(QtCore.QRectF(self._x, h - 2, w, 2))
+                p.setPen(QtGui.QColor(dayu_theme.secondary_text_color))
+            f = QtGui.QFont(font)
+            f.setWeight(QtGui.QFont.Weight.DemiBold if active else QtGui.QFont.Weight.Medium)
+            p.setFont(f)
+            p.drawText(cell, QtCore.Qt.AlignmentFlag.AlignCenter, label)
         p.end()

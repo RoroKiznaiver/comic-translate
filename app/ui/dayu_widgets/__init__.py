@@ -28,7 +28,7 @@ else:
 from .theme import MTheme
 
 
-dayu_theme = MTheme("dark", primary_color=MTheme.orange)
+dayu_theme = MTheme("dark", primary_color=MTheme.apple_blue_dark)
 # dayu_theme.default_size = dayu_theme.small
 # dayu_theme = MTheme('light')
 

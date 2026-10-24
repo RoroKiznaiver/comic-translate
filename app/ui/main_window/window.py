@@ -438,17 +438,17 @@ class ComicTranslateUI(
             return
         light = (theme == self.settings_page.ui.tr("Light")) if hasattr(self, "settings_page") else False
         if light:
-            self.title_bar.apply_style(bg="#f0f0f0", fg="#1a1a1a", hover="rgba(0,0,0,25)")
+            self.title_bar.apply_style(bg="#F2F2F7", fg="#1C1C1E", hover="rgba(0,0,0,25)")
         else:
-            self.title_bar.apply_style(bg="#0A0908", fg="#F0EEE9", hover="rgba(255,255,255,30)")
+            self.title_bar.apply_style(bg="#1C1C1E", fg="#FFFFFF", hover="rgba(255,255,255,30)")
 
     def apply_theme(self, theme: str):
         if theme == self.settings_page.ui.tr("Light"):
-            dayu_theme.set_primary_color(MTheme.blue)
+            dayu_theme.set_primary_color(MTheme.apple_blue_light)
             dayu_theme.set_theme("light")
             is_dark = False
         else:
-            dayu_theme.set_primary_color(MTheme.amber)
+            dayu_theme.set_primary_color(MTheme.apple_blue_dark)
             dayu_theme.set_theme("dark")
             is_dark = True
 
