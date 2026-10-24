@@ -81,11 +81,42 @@ def validate_translator(main: ComicTranslate, target_lang: str):
 
     return True
 
+_PREFERRED_FONTS = ["Comic Neue", "Bangers", "Comic Sans MS", "Segoe UI", "Arial"]
+
+
+def ensure_default_font(main: ComicTranslate) -> bool:
+    """Pick a font automatically when none is selected. True if one is set."""
+    import os
+    from PySide6.QtGui import QFont, QFontDatabase
+
+    if main.render_settings().font_family:
+        return True
+
+    # Fonts dropped into resources/fonts are available without importing them.
+    fonts_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "resources", "fonts")
+    if os.path.isdir(fonts_dir):
+        for name in sorted(os.listdir(fonts_dir)):
+            if name.lower().endswith((".ttf", ".otf")):
+                QFontDatabase.addApplicationFont(os.path.join(fonts_dir, name))
+
+    available = {family.casefold(): family for family in QFontDatabase.families()}
+    for wanted in _PREFERRED_FONTS:
+        family = available.get(wanted.casefold())
+        if not family:
+            continue
+        main.font_dropdown.setCurrentFont(QFont(family))
+        if main.font_dropdown.currentText() != family:
+            main.font_dropdown.setCurrentText(family)
+        if main.render_settings().font_family:
+            return True
+    return False
+
+
 def font_selected(main: ComicTranslate):
-    if not main.render_settings().font_family:
-        Messages.select_font_error(main)
-        return False
-    return True
+    if ensure_default_font(main):
+        return True
+    Messages.select_font_error(main)
+    return False
 
 def validate_settings(main: ComicTranslate, target_lang: str):
     if not validate_ocr(main):

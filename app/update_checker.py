@@ -114,6 +114,9 @@ class UpdateWorker(QObject):
         try:
             url = f"https://api.github.com/repos/{self.owner}/{self.repo}/releases/latest"
             response = requests.get(url, timeout=10)
+            if response.status_code == 404:  # no release published yet
+                self.up_to_date.emit()
+                return
             response.raise_for_status()
             data = response.json()
             

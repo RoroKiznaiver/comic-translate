@@ -1,3 +1,4 @@
+import time
 from typing import Any
 import numpy as np
 import requests
@@ -14,6 +15,8 @@ class GeminiTranslation(BaseLLMTranslation):
         self.model_name = None
         self.api_key = None
         self.api_base_url = "https://generativelanguage.googleapis.com/v1beta/models"
+        self.timeout = 90          # Gemini can be slow when it is busy
+        self.max_attempts = 5
     
     def initialize(self, settings: Any, source_lang: str, target_lang: str, model_name: str, **kwargs) -> None:
         """
@@ -107,13 +110,21 @@ class GeminiTranslation(BaseLLMTranslation):
             "Content-Type": "application/json"
         }
         
-        response = requests.post(
-            url, 
-            headers=headers, 
-            json=payload,
-            timeout=self.timeout
-        )
-        
+        # The API is regularly "busy" (503) or slow: retry with a growing pause
+        # instead of losing the page.
+        retry_statuses = {429, 500, 502, 503, 504}
+        response = None
+        for attempt in range(1, self.max_attempts + 1):
+            try:
+                response = requests.post(url, headers=headers, json=payload, timeout=self.timeout)
+                if response.status_code not in retry_statuses:
+                    break
+            except (requests.Timeout, requests.ConnectionError):
+                if attempt == self.max_attempts:
+                    raise
+            if attempt < self.max_attempts:
+                time.sleep(min(2 ** attempt, 20))
+
         # Handle response
         if response.status_code != 200:
             error_msg = f"API request failed with status code {response.status_code}: {response.text}"

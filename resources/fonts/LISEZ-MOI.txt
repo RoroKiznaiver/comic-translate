@@ -1,0 +1,11 @@
+Polices de Bulle
+================
+Tout fichier .ttf ou .otf place dans ce dossier est charge automatiquement
+au lancement et apparait dans la liste des polices.
+
+Conseil pour les manhwas : une police de bande dessinee en capitales, par
+exemple "Comic Neue" ou "Bangers" (gratuites sur fonts.google.com, licence OFL).
+Telecharge le .ttf, copie-le ici, relance Bulle.
+
+Sans police ici, Bulle choisit seule parmi celles de Windows :
+Comic Neue, Bangers, Comic Sans MS, Segoe UI, Arial.
