@@ -3,6 +3,7 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from app.ui.dayu_widgets import dayu_theme
+from app.ui.glass import paint_glass
 from app.ui.motion import PILL_MS, animations_enabled, spring_animation
 
 
@@ -64,18 +65,11 @@ class StepPill(QtWidgets.QWidget):
 
         inset = 3.0
         track = QtCore.QRectF(inset, inset, total_w - 2 * inset, h - 2 * inset)
-        radius = 10.0
-        p.setPen(QtCore.Qt.PenStyle.NoPen)
-        p.setBrush(QtGui.QColor("#2C2C2E" if dark else "#E3E3E8"))
-        p.drawRoundedRect(track, radius, radius)
+        paint_glass(p, track, track.height() / 2)
 
-        # thumb (with a soft shadow underneath, like the system control)
-        thumb = QtCore.QRectF(self._x + inset + 2, inset + 2, w - 2 * inset - 4, h - 2 * inset - 4)
-        shadow = QtCore.QRectF(thumb).translated(0, 1.2)
-        p.setBrush(QtGui.QColor(0, 0, 0, 70 if dark else 38))
-        p.drawRoundedRect(shadow, radius - 2, radius - 2)
-        p.setBrush(QtGui.QColor("#636366" if dark else "#FFFFFF"))
-        p.drawRoundedRect(thumb, radius - 2, radius - 2)
+        # thumb: a brighter glass capsule that glides to the active step
+        thumb = QtCore.QRectF(self._x + inset + 3, inset + 3, w - 2 * inset - 6, h - 2 * inset - 6)
+        paint_glass(p, thumb, thumb.height() / 2, raised=True, accent=False)
 
         font = self.font()
         font.setWeight(QtGui.QFont.Weight.Medium)
@@ -83,7 +77,7 @@ class StepPill(QtWidgets.QWidget):
             cell = QtCore.QRectF(i * w, 0, w, h)
             active = abs(cell.x() - self._x) < w / 2
             if active:
-                p.setPen(QtGui.QColor(dayu_theme.title_color if dark else "#1C1C1E"))
+                p.setPen(QtGui.QColor(dayu_theme.title_color))
             else:
                 p.setPen(QtGui.QColor(dayu_theme.secondary_text_color))
             f = QtGui.QFont(font)

@@ -77,11 +77,16 @@ def render():
     V = np.array([0, 0, 1.0])
     Hh = L + V; Hh /= np.linalg.norm(Hh)
     nh = np.clip(nx * Hh[0] + ny * Hh[1] + nz * Hh[2], 0, 1)
-    col += (nh ** 90)[..., None] * 0.9 + (nh ** 14)[..., None] * 0.16
+    col += (nh ** 90)[..., None] * 1.15 + (nh ** 14)[..., None] * 0.2
 
     # fresnel rim
     fres = (1 - nz) ** 2.2
     col += np.array([1.0, 0.92, 0.65]) * fres[..., None] * 0.55
+
+    # darker edge for separation (iOS 27 refinement)
+    edge = np.clip(1 - gaussian_filter(mask, 0.012 * N) * 1.0, 0, 1) * mask
+    edge = gaussian_filter(edge, 0.004 * N)
+    col *= (1 - 0.35 * np.clip(edge * 4, 0, 1))[..., None]
 
     # glass glare: elliptical sheen in the upper half
     gl = np.exp(-(((xx - 0.42) / 0.30) ** 2 + ((yy - 0.24) / 0.085) ** 2))

@@ -4,6 +4,7 @@ from .utils import create_title_and_combo, set_combo_box_width
 
 class PersonalizationPage(QtWidgets.QWidget):
     accent_changed = QtCore.Signal(str)
+    glass_changed = QtCore.Signal(int)
 
     def __init__(self, languages: list[str], themes: list[str], parent=None):
         super().__init__(parent)
@@ -26,6 +27,23 @@ class PersonalizationPage(QtWidgets.QWidget):
         if current in self._accent_keys:
             self.accent_combo.setCurrentIndex(self._accent_keys.index(current))
         self.accent_combo.currentIndexChanged.connect(self._on_accent_index)
+
+        # Liquid Glass transparency: ultra clear <-> fully tinted
+        glass_row = QtWidgets.QWidget()
+        glass_layout = QtWidgets.QVBoxLayout(glass_row)
+        glass_layout.setContentsMargins(0, 0, 0, 0)
+        glass_layout.addWidget(QtWidgets.QLabel(self.tr("Glass transparency")))
+        self.glass_slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
+        self.glass_slider.setRange(0, 100)
+        self.glass_slider.setFixedWidth(260)
+        self.glass_slider.setValue(int(QSettings("ComicLabs", "ComicTranslate").value("ui/glass", 55)))
+        self.glass_slider.setToolTip(self.tr("Ultra clear  <->  fully tinted"))
+        self._glass_timer = QtCore.QTimer(self)
+        self._glass_timer.setSingleShot(True)
+        self._glass_timer.setInterval(120)
+        self._glass_timer.timeout.connect(self._apply_glass)
+        self.glass_slider.valueChanged.connect(lambda _v: self._glass_timer.start())
+        glass_layout.addWidget(self.glass_slider)
 
         # Turns every interface animation off (see app/ui/motion.py).
         self.reduce_motion_checkbox = QtWidgets.QCheckBox(self.tr("Reduce animations"))
@@ -53,10 +71,16 @@ class PersonalizationPage(QtWidgets.QWidget):
         layout.addWidget(language_widget)
         layout.addWidget(theme_widget)
         layout.addWidget(accent_widget)
+        layout.addWidget(glass_row)
         layout.addWidget(self.reduce_motion_checkbox)
         layout.addWidget(self.memory_checkbox)
         layout.addWidget(self.memory_clear_button, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
         layout.addStretch()
+
+    def _apply_glass(self) -> None:
+        value = int(self.glass_slider.value())
+        QSettings("ComicLabs", "ComicTranslate").setValue("ui/glass", value)
+        self.glass_changed.emit(value)
 
     def _on_accent_index(self, index: int) -> None:
         if 0 <= index < len(self._accent_keys):

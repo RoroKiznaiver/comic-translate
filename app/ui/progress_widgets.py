@@ -173,10 +173,8 @@ class ProgressChip(QtWidgets.QWidget):
         p = QtGui.QPainter(self)
         p.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         r = QtCore.QRectF(self.rect()).adjusted(0.5, 0.5, -0.5, -0.5)
-        border = QtGui.QColor(dayu_theme.primary_color if self._hover else dayu_theme.border_color)
-        p.setPen(QtGui.QPen(border, 1))
-        p.setBrush(QtGui.QColor(dayu_theme.background_in_color))
-        p.drawRoundedRect(r, 6, 6)
+        from app.ui.glass import paint_glass
+        paint_glass(p, r.adjusted(0, 0, 0, -1), (r.height() - 1) / 2, hover=self._hover)
 
         paint_flame(p, QtCore.QRectF(10, 6, 18, 20), self._lit, self._phase)
         font = self.font()
@@ -195,7 +193,7 @@ class ProgressChip(QtWidgets.QWidget):
         # thin XP bar along the bottom edge
         p.setPen(QtCore.Qt.PenStyle.NoPen)
         p.setBrush(QtGui.QColor(dayu_theme.primary_color))
-        p.drawRect(QtCore.QRectF(6, r.height() - 2, (r.width() - 12) * self._bar, 2))
+        p.drawRoundedRect(QtCore.QRectF(14, r.height() - 5, (r.width() - 28) * self._bar, 2.5), 1.25, 1.25)
         p.end()
 
 

@@ -448,6 +448,11 @@ class ComicTranslateUI(
         return str(QSettings("ComicLabs", "ComicTranslate").value("ui/accent", "amber"))
 
     def apply_theme(self, theme: str):
+        from PySide6.QtCore import QSettings
+        try:
+            dayu_theme.glass_level = int(QSettings("ComicLabs", "ComicTranslate").value("ui/glass", 55))
+        except Exception:
+            pass
         if theme == self.settings_page.ui.tr("Light"):
             dayu_theme.use_accent(self._accent_key(), False)
             dayu_theme.set_theme("light")

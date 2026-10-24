@@ -22,9 +22,9 @@ from .qt import get_scale_factor
 def get_theme_size():
     scale_factor_x, scale_factor_y = get_scale_factor()
     return {
-        "border_radius_large": int(14 * scale_factor_x),
-        "border_radius_base": int(10 * scale_factor_x),
-        "border_radius_small": int(6 * scale_factor_x),
+        "border_radius_large": int(22 * scale_factor_x),
+        "border_radius_base": int(16 * scale_factor_x),
+        "border_radius_small": int(10 * scale_factor_x),
         "huge": int(48 * scale_factor_x),
         "large": int(40 * scale_factor_x),
         "medium": int(32 * scale_factor_x),
@@ -56,7 +56,7 @@ def get_theme_size():
         "spin_box_icon_small": int(8 * scale_factor_x),
         "spin_box_icon_tiny": int(6 * scale_factor_x),
         "drag_border": int(1 * scale_factor_x),
-        "drag_border_radius": int(14 * scale_factor_x),
+        "drag_border_radius": int(22 * scale_factor_x),
         "drag_padding_x": int(20 * scale_factor_x),
         "drag_padding_y": int(40 * scale_factor_x),
         "drag_size": int(60 * scale_factor_x),
@@ -155,6 +155,7 @@ class MTheme(object):
             self.primary_10,
         ) = (None,) * 10
         self.hyperlink_style = ""
+        self.glass_level = 55
         self._init_color()
         self.set_primary_color(primary_color or MTheme.blue)
         self.set_theme(theme)
@@ -173,6 +174,25 @@ class MTheme(object):
         else:
             self._dark()
         self._init_icon(theme)
+        self._update_glass()
+
+    def set_glass(self, level: int) -> None:
+        """0 = ultra clear, 100 = fully tinted (iOS 27 'Liquid Glass' slider)."""
+        self.glass_level = max(0, min(100, int(level)))
+        self._update_glass()
+
+    def _update_glass(self) -> None:
+        t = self.glass_level / 100.0
+        if self.background_color and self.background_color.lower() < "#808080":
+            a, ah, ab = int(255 * (0.05 + 0.17 * t)), int(255 * (0.09 + 0.2 * t)), 38
+            self.glass_fill = "rgba(255,255,255,%d)" % a
+            self.glass_fill_hover = "rgba(255,255,255,%d)" % ah
+            self.glass_border = "rgba(255,255,255,%d)" % (30 + int(30 * t))
+        else:
+            a, ah = int(255 * (0.45 + 0.4 * t)), int(255 * (0.6 + 0.35 * t))
+            self.glass_fill = "rgba(255,255,255,%d)" % a
+            self.glass_fill_hover = "rgba(255,255,255,%d)" % ah
+            self.glass_border = "rgba(0,0,0,24)"
 
     def set_primary_color(self, color):
         self.primary_color = color
