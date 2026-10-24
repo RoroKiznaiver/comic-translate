@@ -195,6 +195,7 @@ class ComicTranslate(ComicTranslateUI):
 
         # Connect other buttons and widgets
         self.translate_button.clicked.connect(self.start_batch_process)
+        self.translate_page_button.clicked.connect(self.translate_current_or_selected)
         self.cancel_button.clicked.connect(self.cancel_current_task)
         self.batch_report_button.clicked.connect(self.show_latest_batch_report)
         self.set_all_button.clicked.connect(self.text_ctrl.set_src_trg_all)
@@ -473,11 +474,13 @@ class ComicTranslate(ComicTranslateUI):
     def batch_mode_selected(self):
         self.disable_hbutton_group()
         self.translate_button.setEnabled(True)
+        self.translate_page_button.setEnabled(True)
         self.cancel_button.setEnabled(True)
 
     def manual_mode_selected(self):
         self.enable_hbutton_group()
         self.translate_button.setEnabled(False)
+        self.translate_page_button.setEnabled(False)
         self.cancel_button.setEnabled(False)
 
     def on_manual_finished(self):
@@ -597,6 +600,15 @@ class ComicTranslate(ComicTranslateUI):
             pass
         self._run_batch_for_paths(self.image_files)
 
+    def translate_current_or_selected(self):
+        """Translate the pages selected in the list, else the page on screen."""
+        selected = [item.text() for item in self.page_list.selectedItems()]
+        if selected:
+            self.batch_translate_selected(selected)
+            return
+        if 0 <= self.curr_img_idx < len(self.image_files):
+            self._run_batch_for_paths([self.image_files[self.curr_img_idx]])
+
     def batch_translate_selected(self, selected_file_names: list[str]):
         try:
             if self._memlogger is not None:
@@ -653,6 +665,7 @@ class ComicTranslate(ComicTranslateUI):
         self._batch_active = True
         self._batch_cancel_requested = False
         self.translate_button.setEnabled(False)
+        self.translate_page_button.setEnabled(False)
         self.cancel_button.setEnabled(True)
         self.save_as_project_button.setEnabled(False)
         self.webtoon_toggle.setEnabled(False)
@@ -701,6 +714,7 @@ class ComicTranslate(ComicTranslateUI):
         self._batch_cancel_requested = False
         self.progress_bar.setVisible(False)
         self.translate_button.setEnabled(True)
+        self.translate_page_button.setEnabled(True)
         self.cancel_button.setEnabled(True)
         self.save_as_project_button.setEnabled(True)
         self.webtoon_toggle.setEnabled(True)

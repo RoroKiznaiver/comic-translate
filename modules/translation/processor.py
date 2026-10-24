@@ -1,9 +1,30 @@
+import os
+
 import numpy as np
 
+from ..utils.paths import get_user_data_dir
 from ..utils.textblock import TextBlock
 from ..utils.translator_utils import has_translatable_content
 from .base import LLMTranslation
 from .factory import TranslationFactory
+from .memory import TranslationMemory, page_key
+
+_memory = None
+
+
+def get_translation_memory() -> TranslationMemory:
+    global _memory
+    if _memory is None:
+        _memory = TranslationMemory(os.path.join(get_user_data_dir(), "translation_memory.sqlite"))
+    return _memory
+
+
+def memory_enabled() -> bool:
+    try:
+        from PySide6.QtCore import QSettings
+        return QSettings("ComicLabs", "ComicTranslate").value("memory/enabled", True, type=bool)
+    except Exception:
+        return True
 
 
 class Translator:
@@ -105,10 +126,35 @@ class Translator:
         if not translatable_blocks:
             return blk_list
 
+        # Translation memory: same texts, languages, translator and context as a
+        # page already translated -> reuse it, send nothing, spend no tokens.
+        key = None
+        memory = None
+        if memory_enabled():
+            try:
+                memory = get_translation_memory()
+                key = page_key(
+                    [getattr(b, "text", "") for b in translatable_blocks],
+                    self.source_lang_en, self.target_lang_en, self.translator_key, extra_context,
+                )
+                stored = memory.get(key, len(translatable_blocks))
+                if stored is not None:
+                    for block, translation in zip(translatable_blocks, stored):
+                        block.translation = translation
+                    return blk_list
+            except Exception:
+                memory = None  # the memory must never break a translation
+
         if self.is_llm_engine:
             # LLM translators need image and extra context
             self.engine.translate(translatable_blocks, image, extra_context)
         else:
             # Text-based translators only need the text blocks
             self.engine.translate(translatable_blocks)
+
+        if memory is not None and key is not None:
+            try:
+                memory.put(key, [getattr(b, "translation", "") for b in translatable_blocks])
+            except Exception:
+                pass
         return blk_list
