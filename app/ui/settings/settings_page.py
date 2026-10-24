@@ -112,6 +112,9 @@ class SettingsPage(QtWidgets.QWidget):
     def _setup_connections(self):
         # Connect signals to slots
         self.ui.theme_combo.currentTextChanged.connect(self.on_theme_changed)
+        self.ui.personalization_page.accent_changed.connect(
+            lambda _k: self.theme_changed.emit(self.ui.theme_combo.currentText())
+        )
         self.ui.lang_combo.currentTextChanged.connect(self.on_language_changed)
         self.ui.translator_combo.currentTextChanged.connect(self._sync_extra_context_limit)
         self.ui.font_browser.sig_files_changed.connect(self.import_font)

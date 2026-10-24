@@ -3,6 +3,8 @@ from PySide6.QtCore import QSettings
 from .utils import create_title_and_combo, set_combo_box_width
 
 class PersonalizationPage(QtWidgets.QWidget):
+    accent_changed = QtCore.Signal(str)
+
     def __init__(self, languages: list[str], themes: list[str], parent=None):
         super().__init__(parent)
         self.languages = languages
@@ -14,6 +16,16 @@ class PersonalizationPage(QtWidgets.QWidget):
         set_combo_box_width(self.lang_combo, self.languages)
         theme_widget, self.theme_combo = create_title_and_combo(self.tr("Theme"), self.themes)
         set_combo_box_width(self.theme_combo, self.themes)
+
+        # Accent colour: the whole interface re-tints live.
+        self._accent_keys = ["amber", "blue", "violet", "green", "pink"]
+        accent_labels = [self.tr("Amber"), self.tr("Blue"), self.tr("Violet"), self.tr("Green"), self.tr("Pink")]
+        accent_widget, self.accent_combo = create_title_and_combo(self.tr("Accent colour"), accent_labels)
+        set_combo_box_width(self.accent_combo, accent_labels)
+        current = str(QSettings("ComicLabs", "ComicTranslate").value("ui/accent", "amber"))
+        if current in self._accent_keys:
+            self.accent_combo.setCurrentIndex(self._accent_keys.index(current))
+        self.accent_combo.currentIndexChanged.connect(self._on_accent_index)
 
         # Turns every interface animation off (see app/ui/motion.py).
         self.reduce_motion_checkbox = QtWidgets.QCheckBox(self.tr("Reduce animations"))
@@ -40,10 +52,17 @@ class PersonalizationPage(QtWidgets.QWidget):
 
         layout.addWidget(language_widget)
         layout.addWidget(theme_widget)
+        layout.addWidget(accent_widget)
         layout.addWidget(self.reduce_motion_checkbox)
         layout.addWidget(self.memory_checkbox)
         layout.addWidget(self.memory_clear_button, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
         layout.addStretch()
+
+    def _on_accent_index(self, index: int) -> None:
+        if 0 <= index < len(self._accent_keys):
+            key = self._accent_keys[index]
+            QSettings("ComicLabs", "ComicTranslate").setValue("ui/accent", key)
+            self.accent_changed.emit(key)
 
     def _clear_memory(self) -> None:
         try:

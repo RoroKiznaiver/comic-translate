@@ -12,7 +12,7 @@ A single user setting, ``ui/reduce_motion``, switches every animation off: the
 helpers then jump straight to the end state.
 """
 
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import QSettings
 
 from app.ui.spring import spring_progress
@@ -119,3 +119,57 @@ def fade_in(widget, duration: int = 320) -> None:
     anim = spring_animation(widget, duration, 1.0, _apply, _done)
     widget._fade_anim = anim
     anim.start()
+
+
+def install_crossfade(stack: QtWidgets.QStackedWidget, duration: int = 420, rise: int = 14) -> None:
+    """Make every page change of ``stack`` a smooth crossfade.
+
+    Before the switch the visible page is captured as a picture. After the switch
+    that picture sits on top and dissolves (while drifting up a little), and the
+    new page fades in underneath with a soft spring. Nothing is animated when
+    animations are off or the stack is not on screen.
+    """
+    if getattr(stack, "_crossfade_installed", False):
+        return
+    stack._crossfade_installed = True
+    original_index = stack.setCurrentIndex
+    original_widget = stack.setCurrentWidget
+
+    def _run(switch) -> None:
+        if (not animations_enabled() or not stack.isVisible() or stack.width() < 8
+                or stack.height() < 8):
+            switch()
+            return
+        before = stack.currentWidget()
+        snapshot = stack.grab()
+        switch()
+        if stack.currentWidget() is before:
+            return
+        old = getattr(stack, "_xfade_label", None)
+        if old is not None:
+            old.deleteLater()
+        label = QtWidgets.QLabel(stack)
+        label.setPixmap(snapshot)
+        label.setGeometry(0, 0, stack.width(), stack.height())
+        label.setAttribute(QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
+        effect = QtWidgets.QGraphicsOpacityEffect(label)
+        label.setGraphicsEffect(effect)
+        label.show()
+        label.raise_()
+        stack._xfade_label = label
+
+        def _apply(p: float) -> None:
+            effect.setOpacity(max(0.0, 1.0 - p * 1.15))
+            label.move(0, -int(rise * p))
+
+        def _done() -> None:
+            if getattr(stack, "_xfade_label", None) is label:
+                stack._xfade_label = None
+            label.deleteLater()
+
+        anim = spring_animation(label, duration, 1.0, _apply, _done)
+        anim.start()
+        fade_in(stack.currentWidget(), duration)
+
+    stack.setCurrentIndex = lambda i: _run(lambda: original_index(i))
+    stack.setCurrentWidget = lambda w: _run(lambda: original_widget(w))

@@ -426,7 +426,7 @@ class Celebration(QtWidgets.QFrame):
         self.setObjectName("celebration")
         self.setStyleSheet(
             f"#celebration{{background:{dayu_theme.primary_color};border-radius:14px;}}"
-            "QLabel{color:#FFFFFF;font-weight:600;}"
+            f"QLabel{{color:{dayu_theme.text_color_inverse};font-weight:600;}}"
         )
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(14, 8, 16, 8)

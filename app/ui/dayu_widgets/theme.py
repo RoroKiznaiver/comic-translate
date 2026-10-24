@@ -100,6 +100,17 @@ def get_theme_size():
     }
 
 
+# Accent colours: key -> (dark appearance, light appearance, text colour on top of the accent)
+ACCENTS = {
+    "amber": ("#FF9F0A", "#FF9500", "#1C1C1E"),
+    "blue": ("#0A84FF", "#007AFF", "#FFFFFF"),
+    "violet": ("#BF5AF2", "#AF52DE", "#FFFFFF"),
+    "green": ("#30D158", "#34C759", "#1C1C1E"),
+    "pink": ("#FF375F", "#FF2D55", "#FFFFFF"),
+}
+DEFAULT_ACCENT = "amber"
+
+
 class QssTemplate(string.Template):
     delimiter = "@"
     idpattern = r"[_a-z][_a-z0-9]*"
@@ -153,7 +164,7 @@ class MTheme(object):
         self.font_unit = "pt"
 
         self.text_error_color = self.error_7
-        self.text_color_inverse = "#fff"
+        self.text_color_inverse = "#1C1C1E"
         self.text_warning_color = self.warning_7
 
     def set_theme(self, theme):
@@ -318,6 +329,12 @@ class MTheme(object):
         self.background_out_color = "#E5E5EA"
         self.mask_color = utils.fade_color(self.background_color, "90%")
         self.toast_color = "#1C1C1E"
+
+    def use_accent(self, key: str, dark: bool) -> None:
+        """Switch the accent colour (and the text colour drawn on top of it)."""
+        dark_hex, light_hex, on_accent = ACCENTS.get(key, ACCENTS[DEFAULT_ACCENT])
+        self.set_primary_color(dark_hex if dark else light_hex)
+        self.text_color_inverse = on_accent
 
     def apply(self, widget):
         size_dict = get_theme_size()

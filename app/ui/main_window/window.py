@@ -6,7 +6,7 @@ if sys.platform == "win32":
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from app.ui.canvas.image_viewer import ImageViewer
-from app.ui.motion import fade_in
+from app.ui.motion import fade_in, install_crossfade
 from app.ui.dayu_widgets import dayu_theme
 from app.ui.dayu_widgets.divider import MDivider
 from app.ui.dayu_widgets.theme import MTheme
@@ -188,7 +188,7 @@ class ComicTranslateUI(
         self._center_stack.addWidget(self.main_content_widget)
         self._center_stack.addWidget(self.settings_page)
 
-        self._center_stack.currentChanged.connect(lambda _i: fade_in(self._center_stack.currentWidget()))
+        install_crossfade(self._center_stack, 460)
         self._center_stack.setCurrentWidget(self.startup_home)
         self._set_document_tools_visible(False)
 
@@ -442,13 +442,18 @@ class ComicTranslateUI(
         else:
             self.title_bar.apply_style(bg="#1C1C1E", fg="#FFFFFF", hover="rgba(255,255,255,30)")
 
+    @staticmethod
+    def _accent_key() -> str:
+        from PySide6.QtCore import QSettings
+        return str(QSettings("ComicLabs", "ComicTranslate").value("ui/accent", "amber"))
+
     def apply_theme(self, theme: str):
         if theme == self.settings_page.ui.tr("Light"):
-            dayu_theme.set_primary_color(MTheme.apple_blue_light)
+            dayu_theme.use_accent(self._accent_key(), False)
             dayu_theme.set_theme("light")
             is_dark = False
         else:
-            dayu_theme.set_primary_color(MTheme.apple_blue_dark)
+            dayu_theme.use_accent(self._accent_key(), True)
             dayu_theme.set_theme("dark")
             is_dark = True
 

@@ -1,4 +1,4 @@
-"""Render the Bulle logo: a glossy 3D speech bubble with an embossed "B".
+"""Render the Bulle logo: a glossy 3D amber speech bubble.
 
 Pure numpy/Pillow/scipy. Outputs resources/icons/{logo.png,icon.png,icon.ico,icon.icns,splash.png}.
 Run: python tools/make_logo.py
@@ -41,15 +41,14 @@ def lerp(a, b, t):
 
 def render():
     mask = shape_mask()
-    letter = letter_mask() * mask
+    letter = np.zeros_like(mask)   # no letter: a clean bubble
 
     # height field: soft pillow + embossed letter
     pillow = gaussian_filter(mask, 0.075 * N)
     pillow = pillow / pillow.max()
     h = (pillow ** 0.8) * 0.28 * N
     lt = gaussian_filter(letter, 0.004 * N)
-    h = h + lt * 0.045 * N
-
+    
     gy, gx = np.gradient(h)
     nz = np.ones_like(h)
     norm = np.sqrt(gx ** 2 + gy ** 2 + nz ** 2)
@@ -58,9 +57,9 @@ def render():
     yy, xx = np.mgrid[0:N, 0:N].astype(np.float32) / N
 
     # base colour: vivid blue -> violet, lighter at the top
-    top = np.array([0.36, 0.64, 1.00])
-    mid = np.array([0.25, 0.38, 0.98])
-    bot = np.array([0.52, 0.28, 0.93])
+    top = np.array([1.00, 0.86, 0.38])
+    mid = np.array([1.00, 0.66, 0.14])
+    bot = np.array([0.94, 0.40, 0.06])
     t = np.clip((yy - 0.12) / 0.78, 0, 1)
     base = np.where(t[..., None] < 0.5, lerp(top, mid, np.clip(t * 2, 0, 1)),
                     lerp(mid, bot, np.clip(t * 2 - 1, 0, 1)))
@@ -72,7 +71,7 @@ def render():
 
     # bounce light from below (subsurface glow)
     bounce = np.clip(ny, 0, 1) * np.clip(1 - nz, 0, 1)
-    col += np.array([0.35, 0.55, 1.0]) * (bounce[..., None] * 0.45)
+    col += np.array([1.0, 0.55, 0.15]) * (bounce[..., None] * 0.5)
 
     # specular
     V = np.array([0, 0, 1.0])
@@ -82,7 +81,7 @@ def render():
 
     # fresnel rim
     fres = (1 - nz) ** 2.2
-    col += np.array([0.55, 0.85, 1.0]) * fres[..., None] * 0.55
+    col += np.array([1.0, 0.92, 0.65]) * fres[..., None] * 0.55
 
     # glass glare: elliptical sheen in the upper half
     gl = np.exp(-(((xx - 0.42) / 0.30) ** 2 + ((yy - 0.24) / 0.085) ** 2))
@@ -109,7 +108,7 @@ def render():
     # glow (blue) then shadow (dark indigo)
     canvas[..., :3] = np.array([0.3, 0.45, 1.0])
     canvas[..., 3] = glow * 0.0 + 0.0
-    sh_col = np.array([0.08, 0.06, 0.30])
+    sh_col = np.array([0.30, 0.10, 0.02])
     out_rgb = np.zeros((N, N, 3), dtype=np.float32)
     out_a = np.zeros((N, N), dtype=np.float32)
     # layer 1: shadow
@@ -130,7 +129,7 @@ def splash(logo):
     cx, cy = W / 2, H * 0.44
     r = np.sqrt(((xx - cx) / W) ** 2 + ((yy - cy) / H) ** 2)
     bg = np.zeros((H, W, 3), np.float32)
-    base = np.array([0.04, 0.04, 0.07]); glow = np.array([0.12, 0.16, 0.42])
+    base = np.array([0.06, 0.055, 0.05]); glow = np.array([0.42, 0.24, 0.05])
     g = np.exp(-(r / 0.28) ** 2)[..., None]
     bg = base + glow * g
     im = Image.fromarray((np.clip(bg, 0, 1) * 255).astype(np.uint8), "RGB").convert("RGBA")
@@ -144,7 +143,7 @@ def splash(logo):
     f2 = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-Regular.otf", 64)
     sub = "Manga & manhwa translation"
     bb = d.textbbox((0, 0), sub, font=f2)
-    d.text((W / 2 - (bb[2] - bb[0]) / 2, int(H * 0.40) + size // 2 + 240), sub, font=f2, fill=(150, 156, 190, 255))
+    d.text((W / 2 - (bb[2] - bb[0]) / 2, int(H * 0.40) + size // 2 + 240), sub, font=f2, fill=(170, 160, 140, 255))
     return im
 
 

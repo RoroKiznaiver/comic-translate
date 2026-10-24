@@ -16,7 +16,7 @@ controller keeps using them, we only toggle their visibility.
 from PySide6 import QtCore
 from PySide6.QtCore import QSettings
 
-from app.ui.motion import fade_in, reveal
+from app.ui.motion import install_crossfade, reveal
 from app.ui.step_logic import compute_step_index
 
 _SETTINGS_ORG = "ComicLabs"
@@ -50,6 +50,7 @@ class SimpleModeMixin:
         self.cancel_button.clicked.connect(self._on_cancel_clicked)
         # The progress bar is visible for the whole duration of a batch.
         self.progress_bar.installEventFilter(self)
+        install_crossfade(self.central_stack, 400)
         self.central_stack.currentChanged.connect(lambda _i: self._on_stack_changed())
 
         self._apply_mode()
@@ -118,7 +119,6 @@ class SimpleModeMixin:
             # Back on the drop zone (new project): start the flow over.
             self._batch_finished = False
         self._update_stepper()
-        fade_in(self.central_stack.currentWidget(), 280)
 
     def eventFilter(self, obj, event):  # type: ignore[override]
         if obj is getattr(self, "progress_bar", None):

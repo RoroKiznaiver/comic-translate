@@ -383,8 +383,8 @@ class _PillButton(QtWidgets.QPushButton):
         if is_dark:
             normal_bg   = "transparent"
             normal_fg   = "#8E8E93"
-            checked_bg  = dayu_theme.primary_color or "#0A84FF"
-            checked_fg  = "#FFFFFF"
+            checked_bg  = dayu_theme.primary_color or "#FF9F0A"
+            checked_fg  = dayu_theme.text_color_inverse
             hover_bg    = "rgba(255,255,255,0.08)"
         else:
             normal_bg   = "transparent"

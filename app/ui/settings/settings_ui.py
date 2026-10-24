@@ -1,7 +1,7 @@
 ﻿import os
 from PySide6 import QtWidgets
 
-from app.ui.motion import fade_in
+from app.ui.motion import install_crossfade
 from PySide6 import QtCore
 
 from ..dayu_widgets.clickable_card import ClickMeta
@@ -193,6 +193,7 @@ class SettingsPageUI(QtWidgets.QWidget):
 
     def _init_ui(self):
         self.stacked_widget = CurrentPageStack()
+        install_crossfade(self.stacked_widget, 340, 8)
         # Ensure the right content can expand horizontally
         self.stacked_widget.setSizePolicy(
             QtWidgets.QSizePolicy.Policy.Expanding,
@@ -370,7 +371,6 @@ class SettingsPageUI(QtWidgets.QWidget):
         self.stacked_widget.updateGeometry()
         # Reset scroll position to top for a better UX
         self.content_scroll.verticalScrollBar().setValue(0)
-        fade_in(self.stacked_widget.currentWidget(), 260)
 
     def _on_page_changed(self, index):
         """Handle page changes to ensure scroll area recalculates properly."""
