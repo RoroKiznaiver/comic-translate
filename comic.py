@@ -155,6 +155,9 @@ def main():
     router = OpenRequestRouter()
     file_open_event_filter = FileOpenEventFilter(router)
     app.installEventFilter(file_open_event_filter)
+    from app.ui.delight import PressFeedback
+    _press_feedback = PressFeedback(app)
+    app.installEventFilter(_press_feedback)
 
     # Single-instance behavior (Windows/Linux). macOS typically routes file opens to the
     # existing instance via QFileOpenEvent, which we also handle above.

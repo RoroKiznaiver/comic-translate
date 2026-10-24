@@ -609,6 +609,8 @@ class ComicTranslate(ComicTranslateUI):
 
         self.progress = Progress(os.path.join(get_user_data_dir(), "profile.json"))
         self.celebration = Celebration(self)
+        from app.ui.delight import Confetti
+        self.confetti = Confetti(self)
         self._last_batch_paths: list[str] = []
         self.progress_chip.clicked.connect(self.show_progress_dialog)
         self._refresh_progress_chip(animate=False)
@@ -662,8 +664,15 @@ class ComicTranslate(ComicTranslateUI):
             messages.append(self.tr("{0}-day streak!").format(result["streak"]))
         if result["goal_reached"]:
             messages.append(self.tr("Daily goal reached"))
+        try:
+            from app.ui.delight import float_text
+            float_text(self.progress_chip, "+{0} XP".format(result.get("xp_gained", done * 10)))
+        except Exception:
+            pass
         if messages:
             self.celebration.show_messages(messages)
+            big = result["level_up"] or result["goal_reached"]
+            self.confetti.burst(120 if big else 50)
 
     def translate_current_or_selected(self):
         """Translate the pages selected in the list, else the page on screen."""
