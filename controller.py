@@ -196,6 +196,7 @@ class ComicTranslate(ComicTranslateUI):
         # Connect other buttons and widgets
         self.translate_button.clicked.connect(self.start_batch_process)
         self.translate_page_button.clicked.connect(self.translate_current_or_selected)
+        self._init_progress()
         self.cancel_button.clicked.connect(self.cancel_current_task)
         self.batch_report_button.clicked.connect(self.show_latest_batch_report)
         self.set_all_button.clicked.connect(self.text_ctrl.set_src_trg_all)
@@ -600,6 +601,70 @@ class ComicTranslate(ComicTranslateUI):
             pass
         self._run_batch_for_paths(self.image_files)
 
+    # ------------------------------------------------------------ progress
+    def _init_progress(self):
+        from app.progress.model import Progress
+        from app.ui.progress_widgets import Celebration
+        from modules.utils.paths import get_user_data_dir
+
+        self.progress = Progress(os.path.join(get_user_data_dir(), "profile.json"))
+        self.celebration = Celebration(self)
+        self._last_batch_paths: list[str] = []
+        self.progress_chip.clicked.connect(self.show_progress_dialog)
+        self._refresh_progress_chip(animate=False)
+        QtCore.QTimer.singleShot(1200, self._maybe_ask_profile)
+
+    def _refresh_progress_chip(self, animate: bool = True):
+        from datetime import date
+        pr = self.progress
+        self.progress_chip.set_state(
+            pr.streak(), pr.level, pr.level_progress(), pr.pages_on(date.today()) > 0, animate
+        )
+
+    def _maybe_ask_profile(self):
+        if not self.progress.has_profile():
+            self._ask_profile()
+
+    def _ask_profile(self) -> bool:
+        from app.ui.progress_widgets import ProfileSetupDialog
+        dialog = ProfileSetupDialog(self)
+        if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+            name, goal = dialog.values()
+            self.progress.create_profile(name, goal)
+            self._refresh_progress_chip(animate=False)
+            return True
+        return False
+
+    def show_progress_dialog(self):
+        from app.ui.progress_widgets import ProgressDialog
+        if not self.progress.has_profile() and not self._ask_profile():
+            return
+        ProgressDialog(self.progress, self).exec()
+        self._refresh_progress_chip(animate=False)
+
+    def _record_progress(self, report, was_cancelled: bool):
+        """XP, level and flame for the pages this batch really translated."""
+        if was_cancelled:
+            return
+        paths = set(self._last_batch_paths)
+        skipped = 0
+        if report:
+            skipped = sum(1 for e in report.get("skipped_entries", []) if e.get("image_path") in paths)
+        done = max(0, len(paths) - skipped)
+        if not done:
+            return
+        result = self.progress.record_pages(done)
+        self._refresh_progress_chip(animate=True)
+        messages = []
+        if result["level_up"]:
+            messages.append(self.tr("Level {0} reached!").format(result["level"]))
+        if result["streak_extended"] or result["streak_started"]:
+            messages.append(self.tr("{0}-day streak!").format(result["streak"]))
+        if result["goal_reached"]:
+            messages.append(self.tr("Daily goal reached"))
+        if messages:
+            self.celebration.show_messages(messages)
+
     def translate_current_or_selected(self):
         """Translate the pages selected in the list, else the page on screen."""
         selected = [item.text() for item in self.page_list.selectedItems()]
@@ -655,6 +720,7 @@ class ComicTranslate(ComicTranslateUI):
             if not validate_settings(self, tgt):
                 return
 
+        self._last_batch_paths = list(unique_paths)
         self.image_ctrl.clear_page_skip_errors_for_paths(unique_paths)
         self._start_batch_report(unique_paths)
         self.selected_batch = [] if len(unique_paths) == len(self.image_files) else unique_paths
@@ -719,6 +785,10 @@ class ComicTranslate(ComicTranslateUI):
         self.save_as_project_button.setEnabled(True)
         self.webtoon_toggle.setEnabled(True)
         self.selected_batch = []
+        try:
+            self._record_progress(report, was_cancelled)
+        except Exception:
+            pass  # progress is a bonus: it must never get in the way of a translation
         if report and report["skipped_count"] > 0:
             Messages.show_batch_skipped_summary(self, report["skipped_count"])
         elif not was_cancelled:

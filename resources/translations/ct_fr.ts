@@ -85,6 +85,18 @@
 <context>
     <name>ComicTranslate</name>
     <message>
+        <source>Level {0} reached!</source>
+        <translation>Niveau {0} atteint !</translation>
+    </message>
+    <message>
+        <source>{0}-day streak!</source>
+        <translation>Série de {0} jours !</translation>
+    </message>
+    <message>
+        <source>Daily goal reached</source>
+        <translation>Objectif du jour atteint</translation>
+    </message>
+    <message>
         <location filename="../../controller.py" line="565"/>
         <location filename="../../controller.py" line="575"/>
         <source>Error</source>
@@ -820,6 +832,22 @@ Veuillez vérifier votre connexion Internet.</translation>
 </context>
 <context>
     <name>PersonalizationPage</name>
+    <message>
+        <source>Reuse previous translations (saves tokens)</source>
+        <translation>Réutiliser les traductions précédentes (économise des tokens)</translation>
+    </message>
+    <message>
+        <source>Forget stored translations</source>
+        <translation>Oublier les traductions mémorisées</translation>
+    </message>
+    <message>
+        <source>Next time, every page is sent to the translator again</source>
+        <translation>La prochaine fois, chaque page sera renvoyée au traducteur</translation>
+    </message>
+    <message>
+        <source>Stored translations forgotten</source>
+        <translation>Traductions mémorisées effacées</translation>
+    </message>
     <message>
         <location filename="../../app/ui/settings/personalization_page.py" line="12"/>
         <source>Language</source>
@@ -1745,6 +1773,14 @@ puis effectuer l&apos;inpainting sur l&apos;image redimensionnée.</translation>
 </context>
 <context>
     <name>WorkspaceMixin</name>
+    <message>
+        <source>Translate page</source>
+        <translation>Traduire la page</translation>
+    </message>
+    <message>
+        <source>Translate only the page you are looking at, or the pages selected in the list</source>
+        <translation>Traduit uniquement la page affichée, ou les pages sélectionnées dans la liste</translation>
+    </message>
     <message>
         <source>Advanced options</source>
         <translation>Options avancées</translation>
@@ -2689,6 +2725,133 @@ Il a peut-être été déplacé, renommé ou supprimé.
     <message>
         <source>Steps</source>
         <translation>Étapes</translation>
+    </message>
+</context>
+<context>
+    <name>Progress</name>
+    <message>
+        <source>Your progress</source>
+        <translation>Ta progression</translation>
+    </message>
+    <message>
+        <source>Level {0} · {1}-day streak</source>
+        <translation>Niveau {0} · série de {1} jours</translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation>Cette semaine</translation>
+    </message>
+    <message>
+        <source>Daily goal</source>
+        <translation>Objectif quotidien</translation>
+    </message>
+    <message>
+        <source>{0} pages</source>
+        <translation>{0} pages</translation>
+    </message>
+    <message>
+        <source>1 page</source>
+        <translation>1 page</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Fermer</translation>
+    </message>
+    <message>
+        <source>{0}-day streak</source>
+        <translation>Série de {0} jours</translation>
+    </message>
+    <message>
+        <source>No streak yet</source>
+        <translation>Pas encore de série</translation>
+    </message>
+    <message>
+        <source>Level {0} · {1}</source>
+        <translation>Niveau {0} · {1}</translation>
+    </message>
+    <message>
+        <source>{0} XP · {1} XP to level {2}</source>
+        <translation>{0} XP · {1} XP avant le niveau {2}</translation>
+    </message>
+    <message>
+        <source>Today: {0} / {1} pages</source>
+        <translation>Aujourd'hui : {0} / {1} pages</translation>
+    </message>
+    <message>
+        <source>Welcome to Bulle</source>
+        <translation>Bienvenue dans Bulle</translation>
+    </message>
+    <message>
+        <source>Create your profile</source>
+        <translation>Crée ton profil</translation>
+    </message>
+    <message>
+        <source>Translate pages to earn XP, level up and keep your daily flame alive. Your profile is saved only on this computer.</source>
+        <translation>Traduis des pages pour gagner de l'XP, monter de niveau et garder ta flamme du jour allumée. Ton profil est enregistré uniquement sur cet ordinateur.</translation>
+    </message>
+    <message>
+        <source>Your name</source>
+        <translation>Ton prénom</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Commencer</translation>
+    </message>
+    <message>
+        <source>Later</source>
+        <translation>Plus tard</translation>
+    </message>
+    <message>
+        <source>M</source>
+        <translation>L</translation>
+    </message>
+    <message>
+        <source>T</source>
+        <translation>M</translation>
+    </message>
+    <message>
+        <source>W</source>
+        <translation>M</translation>
+    </message>
+    <message>
+        <source>F</source>
+        <translation>V</translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation>S</translation>
+    </message>
+    <message>
+        <source>Apprentice</source>
+        <translation>Apprenti</translation>
+    </message>
+    <message>
+        <source>Translator</source>
+        <translation>Traducteur</translation>
+    </message>
+    <message>
+        <source>Typesetter</source>
+        <translation>Typographe</translation>
+    </message>
+    <message>
+        <source>Cleaner</source>
+        <translation>Nettoyeur</translation>
+    </message>
+    <message>
+        <source>Scanlator</source>
+        <translation>Scanlateur</translation>
+    </message>
+    <message>
+        <source>Editor</source>
+        <translation>Éditeur</translation>
+    </message>
+    <message>
+        <source>Bubble Master</source>
+        <translation>Maître des bulles</translation>
+    </message>
+    <message>
+        <source>Scan Legend</source>
+        <translation>Légende du scan</translation>
     </message>
 </context>
 </TS>

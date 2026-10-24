@@ -17,6 +17,7 @@ from app.ui.dayu_widgets.slider import MSlider
 from app.ui.dayu_widgets.text_edit import MTextEdit
 from app.ui.dayu_widgets.tool_button import MToolButton
 from app.ui.search_replace_panel import SearchReplacePanel
+from app.ui.progress_widgets import ProgressChip
 from app.ui.step_pill import StepPill
 from app.ui.main_window.constants import supported_source_languages, supported_target_languages
 
@@ -91,6 +92,7 @@ class WorkspaceMixin:
 
         # Simple-mode helpers: the step indicator and the switch to the full toolset.
         self.step_pill = StepPill([self.tr("Import"), self.tr("Translate"), self.tr("Export")])
+        self.progress_chip = ProgressChip()
         self.advanced_checkbox = MCheckBox(self.tr("Advanced options"))
         self.advanced_checkbox.setToolTip(
             self.tr("Show every step, text-styling and editing tool")
@@ -101,6 +103,7 @@ class WorkspaceMixin:
         header_layout.addWidget(self.hbutton_group)
         header_layout.addWidget(self.loading)
         header_layout.addStretch()
+        header_layout.addWidget(self.progress_chip)
         header_layout.addWidget(self.advanced_checkbox)
         header_layout.addWidget(self.webtoon_toggle)
         header_layout.addWidget(self.manual_radio)
