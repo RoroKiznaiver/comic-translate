@@ -32,7 +32,7 @@ class GeminiTranslation(BaseLLMTranslation):
         
         self.model_name = model_name
         credentials = settings.get_credentials(settings.ui.tr('Google Gemini'))
-        self.api_key = credentials.get('api_key', '')
+        self.api_key = (credentials.get('api_key', '') or '').strip()
         
         # Map friendly model name to API model name
         self.model_api_name = MODEL_MAP.get(self.model_name)
@@ -126,6 +126,11 @@ class GeminiTranslation(BaseLLMTranslation):
                 time.sleep(min(2 ** attempt, 20))
 
         # Handle response
+        if response.status_code == 400 and "API_KEY_INVALID" in response.text:
+            raise Exception(
+                "Gemini rejected the API key (invalid). Create a new key at aistudio.google.com/apikey "
+                "and paste it in Settings > Credentials > Google Gemini."
+            )
         if response.status_code != 200:
             error_msg = f"API request failed with status code {response.status_code}: {response.text}"
             raise Exception(error_msg)

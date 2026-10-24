@@ -41,6 +41,7 @@ class SettingsPage(QtWidgets.QWidget):
         self._pricing_refresh_timer: Optional[QTimer] = None
         self._pricing_refresh_attempts: int = 0
         self._pricing_refresh_baseline: Optional[Any] = None
+        self._forget_online_session()
         self.auth_client = AuthClient(API_BASE_URL, FRONTEND_BASE_URL)
         self.catalog = ClientCatalog(self)
         self.catalog.updated.connect(self._apply_remote_catalog)
@@ -76,6 +77,19 @@ class SettingsPage(QtWidgets.QWidget):
         self._refresh_credits_on_startup()
         self._apply_remote_catalog(self.catalog.load())
         self.catalog.refresh_async()
+
+    @staticmethod
+    def _forget_online_session() -> None:
+        """Bulle has no online account: drop any session left by the original app,
+        so nothing is refreshed or sent to its servers at startup."""
+        try:
+            from app.account.auth.token_storage import delete_token
+            for name in ("access_token", "refresh_token"):
+                delete_token(name)
+            settings = QSettings("ComicLabs", "ComicTranslate")
+            settings.remove(USER_INFO_GROUP)
+        except Exception:
+            pass
 
     def _apply_remote_catalog(self, catalog: dict) -> None:
         self.ui.apply_remote_catalog(catalog)
@@ -173,7 +187,7 @@ class SettingsPage(QtWidgets.QWidget):
 
         def _text_or_none(widget_key):
             w = self.ui.credential_widgets.get(widget_key)
-            return w.text() if w is not None else None
+            return w.text().strip() if w is not None else None
 
         if service:
             normalized = self.ui.value_mappings.get(service, service)
